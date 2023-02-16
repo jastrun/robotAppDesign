@@ -205,5 +205,6 @@ class Sheet:
 
 if __name__ == "__main__":
     # 测试代码
-    print("master修改的代码1")
     db.close()
+
+# 若当前代码不是main则数据库不会自己关闭
