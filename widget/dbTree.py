@@ -9,8 +9,8 @@ class dbTree(QTreeWidget):
     def __init__(self, db):
         super().__init__()
         self.root = QTreeWidgetItem(self)
-        self.root.setText(0,"机器人数据库")
-        self.robotList=[]
+        self.root.setText(0, "机器人数据库")
+        self.robotList = []
         self.db = db
         self.initTree()
 
@@ -23,10 +23,12 @@ class dbTree(QTreeWidget):
     # 同步数据库中的机器人到树
     def TBdb(self):
         # 将数据同步到表格中
-        root=self.root
+        root = self.root
         print(self.invisibleRootItem().removeChild(root))
         self.root = QTreeWidgetItem(self)
-        self.root.setText(0,"机器人数据库")
+        self.root.setText(0, "机器人数据库")
+        self.root.setExpanded(True)
+        # 查询机器人表格
         robotSheet = []
         cur = self.db.cursor()
         sql = "select * from robot"
@@ -43,7 +45,7 @@ class dbTree(QTreeWidget):
             robot = QTreeWidgetItem(self.root)
             robot.setText(0, num)
             robot.setText(1, name)
-            # 添加运动节点
+            # 查询运动节点表格
             motorSheet = []
             sql = "select * from motor where ofRobotNum={}".format(num)
             cur.execute(sql)
@@ -57,16 +59,22 @@ class dbTree(QTreeWidget):
                 motor = QTreeWidgetItem(robot)
                 motor.setText(0, name[0])
         self.db.commit()
+        # 更新总列表
+        self.robotList = []
+        for num, name in robotSheet:
+            self.robotList.append(SixAxisRobot(self.db, num, name, insertOrNot=False))
+        item = list(robot.num for robot in self.robotList)
+        print(item)
 
     # 新建机器人
     def creatRobot(self):
-        SixAxisRobot(self.db, '0013')
+        temprobot = SixAxisRobot(self.db, '0013')
+        self.robotList.append(temprobot)
 
     def deleteRobot(self):
         # 删除节点
-        item=self.currentItem()
-        for item in self.selectedItems():
-            item.parent().removeChild(item)
-
-
-
+        item = self.currentItem()
+        for robot in self.robotList:
+            if robot.num == item.data(0, 0):
+                robot.deleteSelf(self.db) # 从数据库中删除机器人
+        item.parent().removeChild(item)
