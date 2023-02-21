@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from db.sheetOp import *
+from creatRobotWidget import *
 
 
 class dbTree(QTreeWidget):
@@ -68,7 +69,12 @@ class dbTree(QTreeWidget):
 
     # 新建机器人
     def creatRobot(self):
-        temprobot = SixAxisRobot(self.db, '0013')
+        dialog=creatRobotWidget(self)
+        dialog.robotinfo_signal.connect(self.acceptNewRobot)
+        dialog.exec_()
+
+    def acceptNewRobot(self, num, name):
+        temprobot = SixAxisRobot(self.db, num,name)
         self.robotList.append(temprobot)
 
     def deleteRobot(self):
@@ -78,3 +84,4 @@ class dbTree(QTreeWidget):
             if robot.num == item.data(0, 0):
                 robot.deleteSelf(self.db) # 从数据库中删除机器人
         item.parent().removeChild(item)
+
