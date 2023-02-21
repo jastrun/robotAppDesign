@@ -2,15 +2,14 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from dbTree import *
-from setdbMenu import *
-
 # 连接数据库
 try:
     db = pymysql.connect(host="localhost",
                          user="root",
                          password="aoteman000",
                          database="robotinfo",
-                         charset="utf8")
+                         charset="utf8"
+                         )
     print("数据库连接成功")
 except pymysql.Error as e:
     print("数据库连接失败：" + str(e))
@@ -52,6 +51,10 @@ class mainWindow(QMainWindow):
 
         dbAct_newRobot = QAction('新建机器人', self)  # 创建动作
         dbmenu.addAction(dbAct_newRobot)  # 添加动作
-        dbAct_syndb.triggered.connect(self.robotTree.creatRobot)  # 关联相关操作
+        dbAct_newRobot.triggered.connect(self.robotTree.creatRobot)  # 关联相关操作
+
+        dbAct_deleteRobot = QAction('删除机器人', self)  # 创建动作
+        dbmenu.addAction(dbAct_deleteRobot)  # 添加动作
+        dbAct_deleteRobot.triggered.connect(self.robotTree.deleteRobot)  # 关联相关操作
 
 
