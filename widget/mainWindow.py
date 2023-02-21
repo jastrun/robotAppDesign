@@ -2,31 +2,37 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from dbTree import *
+from setdbMenu import *
+
+# 连接数据库
+try:
+    db = pymysql.connect(host="localhost",
+                         user="root",
+                         password="aoteman000",
+                         database="robotinfo",
+                         charset="utf8")
+    print("数据库连接成功")
+except pymysql.Error as e:
+    print("数据库连接失败：" + str(e))
+    cur = db.cursor()
 
 
 class mainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.robotTree = dbTree(db)
         self.initUI()
 
     def initUI(self):
+        # 主布局窗口
+        mainWidget = QWidget()
+        Hlayout = QHBoxLayout()
         # 设置标题
         self.setWindowTitle('机器人运动信息存储与显示工具')
-        # 添加菜单栏
-        LinkDbAct = QAction('连接数据库', self)
-        LinkDbAct.setStatusTip('连接数据库')
-
-        #   连接数据库操作     LinkDbAct.triggered.connect(qApp.quit)
-
-        menubar = self.menuBar()
-        fileMenu = menubar.addMenu('数据库')
-        fileMenu.addAction(LinkDbAct)
-
-        Hlayout = QHBoxLayout()
-        mainWidget = QWidget()
-        # 机器人树
-        robotTRee = dbTree()
-        Hlayout.addWidget(robotTRee)
+        # 菜单栏设置
+        self.initMenuBar()
+        # 设置机器人树
+        Hlayout.addWidget(self.robotTree)
 
         mainWidget.setLayout(Hlayout)
         self.setCentralWidget(mainWidget)
@@ -35,3 +41,17 @@ class mainWindow(QMainWindow):
         self.resize(800, 800)
 
         self.show()
+
+    def initMenuBar(self):
+        menubar = self.menuBar()
+        dbmenu = menubar.addMenu("数据库")
+
+        dbAct_syndb = QAction('同步数据库到树', self)  # 创建动作
+        dbmenu.addAction(dbAct_syndb)  # 添加动作
+        dbAct_syndb.triggered.connect(self.robotTree.TBdb)  # 关联相关操作
+
+        dbAct_newRobot = QAction('新建机器人', self)  # 创建动作
+        dbmenu.addAction(dbAct_newRobot)  # 添加动作
+        dbAct_syndb.triggered.connect(self.robotTree.creatRobot)  # 关联相关操作
+
+

@@ -3,8 +3,7 @@ import time
 import datetime
 from datetime import date
 
-# 连接数据库
-try:
+'''try:
     db = pymysql.connect(host="localhost",
                          user="root",
                          password="aoteman000",
@@ -13,7 +12,7 @@ try:
     print("数据库连接成功")
 except pymysql.Error as e:
     print("数据库连接失败：" + str(e))
-cur = db.cursor()
+    cur = db.cursor()'''
 
 
 # 数据格式基类
@@ -40,7 +39,8 @@ class AngleData(DataFormat):
         self.angleSpeed = angleSpeed
 
     # 上载数据
-    def uploadData(self):
+    def uploadData(self,db):
+        cur = db.cursor()
         try:
             sql = "INSERT AngleData(name,time,OfMotorName,angle,angleSpeed) " \
                   "VALUES('{}','{}','{}','{}','{}')" \
@@ -66,7 +66,8 @@ class Motor:
 
     #       self.__creatMotor()
 
-    def creatMotor(self):
+    def creatMotor(self,db):
+        cur = db.cursor()
         try:
             sql = "INSERT motor(name,ofRobotNum,funtion,dataFormat) " \
                   "VALUES('{}','{}','{}','{}')" \
@@ -85,15 +86,15 @@ class Motor:
 
 # 运动节点实体
 class MotorOfSix(Motor):
-    def __init__(self, name, ofRobotNum):
+    def __init__(self, name, ofRobotNum,db):
         super().__init__(name, ofRobotNum)
         self.funtion = '角度运动'
         self.dataFormat = 'AngleData'
-        self.creatMotor()
+        self.creatMotor(db)
 
     # 在表motor中创建一个运动单元记录
-    def creatMotor(self):
-        super().creatMotor()
+    def creatMotor(self,db):
+        super().creatMotor(db)
 
     # 将运动单元的数据存入数据库中(dataunit表)
     def recordData(self, name, angle, angleSpeed):
@@ -103,16 +104,17 @@ class MotorOfSix(Motor):
 
 # robot实体基类
 class Robot:
-    def __init__(self, num, label='default', insertOrNot=True):
+    def __init__(self, db,num, label='default', insertOrNot=True):
         self.num = num
         self.label = label  # 机器人基类默认标签为default
         if insertOrNot:  # 用于判断是创建操作还是更新操作
-            self.__creat()  # 创建则需要插入数据库信息
+            self.__creat(db)  # 创建则需要插入数据库信息
         else:
             pass  # 同步操作仅需要创建对象即可，无需插入
 
     # 往数据库插入相关信息
-    def __creat(self):
+    def __creat(self,db):
+        cur = db.cursor()
         try:
             sql = "INSERT robot(Rnum,Rlabel) VALUES('{}','{}')".format(self.num, self.label)
             cur.execute(sql)
@@ -123,7 +125,8 @@ class Robot:
             print("创建机器人{}失败！".format(self.num) + str(e))
 
     # 删除自身
-    def deleteSelf(self):
+    def deleteSelf(self,db):
+        cur = db.cursor()
         try:
             sql = "DELETE FROM robot WHERE Rnum='{}'".format(self.num)
             cur.execute(sql)
@@ -150,7 +153,8 @@ class Robot:
         return self.num, self.label
 
     # 更新属性
-    def updateAtt(self, num, label):
+    def updateAtt(self, num, label,db):
+        cur = db.cursor()
         try:
             sql = "UPDATE robot SET Rnum='{}',Rlabel='{}' WHERE Rnum='{}'".format(num, label, self.num)
             cur.execute(sql)
@@ -165,20 +169,20 @@ class Robot:
 
 # 六轴工业机器人
 class SixAxisRobot(Robot):
-    def __init__(self, num, label='六轴工业机器人', insertOrNot=True):
-        super().__init__(num, label, insertOrNot)
+    def __init__(self, db,num, label='六轴工业机器人', insertOrNot=True):
+        super().__init__(db,num, label, insertOrNot)
         self.label = label
-        self.__generate6Motor()
+        self.__generate6Motor(db)
 
     # 产生机器人运动节点
-    def __generate6Motor(self):
+    def __generate6Motor(self,db):
         try:
-            self.motor1 = MotorOfSix('六轴001', self.num)
-            self.motor2 = MotorOfSix('六轴002', self.num)
-            self.motor3 = MotorOfSix('六轴003', self.num)
-            self.motor4 = MotorOfSix('六轴004', self.num)
-            self.motor5 = MotorOfSix('六轴005', self.num)
-            self.motor6 = MotorOfSix('六轴006', self.num)
+            self.motor1 = MotorOfSix('六轴001', self.num,db)
+            self.motor2 = MotorOfSix('六轴002', self.num,db)
+            self.motor3 = MotorOfSix('六轴003', self.num,db)
+            self.motor4 = MotorOfSix('六轴004', self.num,db)
+            self.motor5 = MotorOfSix('六轴005', self.num,db)
+            self.motor6 = MotorOfSix('六轴006', self.num,db)
         except pymysql.Error as e:
             print("创建机器人节点失败！" + str(e))
 
@@ -190,9 +194,9 @@ class Sheet:
     def __init__(self, sheetName):
         self.sheetList = []
         self.sheetName = sheetName
-        self.TBdb()
 
-    def TBdb(self):
+    def TBdb(self, tempdb):
+        cur = tempdb.cursor
         sql = "select * from {}".format(self.sheetName)
         cur.execute(sql)
         try:
@@ -205,6 +209,6 @@ class Sheet:
 
 if __name__ == "__main__":
     # 测试代码
-    db.close()
+    Sheet('robot')
 
 # 若当前代码不是main则数据库不会自己关闭
