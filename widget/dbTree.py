@@ -20,6 +20,7 @@ class dbTree(QTreeWidget):
         self.setColumnCount(2)  # 制定树控件为两列
         self.setHeaderLabels(["编码", "名字"])  # 设置列标签
         self.expandAll()  # 设置所有的节点为展开的状态
+        self.TBdb()  # 初始化同步数据库
 
     # 同步数据库中的机器人到树
     def TBdb(self):

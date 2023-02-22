@@ -2,6 +2,9 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from dbTree import *
+from serialOp import serialdemo, serialdemo_ui
+from serialOp.serialdemo import *
+
 # 连接数据库
 try:
     db = pymysql.connect(host="localhost",
@@ -16,7 +19,7 @@ except pymysql.Error as e:
     cur = db.cursor()
 
 
-class mainWindow(QMainWindow):
+class mainWindow(QMainWindow,Pyqt5_Serial):
     def __init__(self):
         super().__init__()
         self.robotTree = dbTree(db)
@@ -32,8 +35,9 @@ class mainWindow(QMainWindow):
         self.initMenuBar()
         # 设置机器人树
         Hlayout.addWidget(self.robotTree)
-
-        mainWidget.setLayout(Hlayout)
+        Vlayout=QVBoxLayout()
+        Vlayout.addLayout(Hlayout)
+        mainWidget.setLayout(Vlayout)
         self.setCentralWidget(mainWidget)
 
         # 设置大小
@@ -56,5 +60,3 @@ class mainWindow(QMainWindow):
         dbAct_deleteRobot = QAction('删除机器人', self)  # 创建动作
         dbmenu.addAction(dbAct_deleteRobot)  # 添加动作
         dbAct_deleteRobot.triggered.connect(self.robotTree.deleteRobot)  # 关联相关操作
-
-
