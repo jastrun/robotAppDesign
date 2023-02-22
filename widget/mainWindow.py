@@ -1,6 +1,7 @@
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 from dbTree import *
 from serialOp import serialdemo, serialdemo_ui
 from serialOp.serialdemo import *
@@ -19,7 +20,7 @@ except pymysql.Error as e:
     cur = db.cursor()
 
 
-class mainWindow(QMainWindow,Pyqt5_Serial):
+class mainWindow(QMainWindow, Pyqt5_Serial):
     def __init__(self):
         super().__init__()
         self.robotTree = dbTree(db)
@@ -35,9 +36,43 @@ class mainWindow(QMainWindow,Pyqt5_Serial):
         self.initMenuBar()
         # 设置机器人树
         Hlayout.addWidget(self.robotTree)
-        Vlayout=QVBoxLayout()
+        Vlayout = QVBoxLayout()
         Vlayout.addLayout(Hlayout)
         mainWidget.setLayout(Vlayout)
+
+        serialLayout = QGridLayout()
+        settinglayout = QFormLayout()
+        settinglayout.addRow(self.s1__lb_1, self.s1__box_1)
+        settinglayout.addRow(self.s1__lb_2, self.s1__box_2)
+        settinglayout.addRow("串口状态", self.state_label)
+        settinglayout.addRow(self.s1__lb_3, self.s1__box_3)
+        settinglayout.addRow(self.s1__lb_4, self.s1__box_4)
+        settinglayout.addRow(self.s1__lb_5, self.s1__box_5)
+        settinglayout.addRow(self.s1__lb_6, self.s1__box_6)
+        settinglayout.addRow(self.open_button)
+        settinglayout.addRow(self.close_button)
+        settinglayout.addRow(self.label,self.lineEdit)
+        settinglayout.addRow(self.label_2, self.lineEdit_2)
+        settinglayout.addRow(self.serialstateLabel)
+        serialLayout.addLayout(settinglayout, 0, 0)
+
+        sendLayout = QGridLayout()
+        sendLayout.addWidget(self.s3__send_text,0,0,1,3)
+        sendLayout.addWidget(self.s3__send_button,1,0)
+        sendLayout.addWidget(self.s3__clear_button, 1, 1)
+        sendLayout.addWidget(self.hex_send, 1, 2)
+        sendLayout.addWidget(self.timer_send_cb, 2, 0)
+        sendLayout.addWidget(self.lineEdit_3, 2, 1)
+        sendLayout.addWidget(self.dw, 2, 2)
+
+        receiveLayout=QFormLayout()
+        receiveLayout.addRow(self.s2__receive_text)
+        receiveLayout.addRow(self.hex_receive,self.s2__clear_button)
+
+        serialLayout.addLayout(receiveLayout, 0, 1)
+        serialLayout.addLayout(sendLayout, 0, 2)
+        Vlayout.addLayout(serialLayout)
+
         self.setCentralWidget(mainWidget)
 
         # 设置大小

@@ -14,6 +14,8 @@ class dbTree(QTreeWidget):
         self.robotList = []
         self.db = db
         self.initTree()
+        self.header().setSectionResizeMode(QHeaderView.Stretch)
+        self.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)
 
     def initTree(self):
         # 设置树控件

@@ -14,6 +14,9 @@ class Ui_Form(object):
 
         Form.setObjectName("Form")
         Form.resize(707, 458)
+
+        self.serialstateLabel=QtWidgets.QLabel("串口状态（已关闭）")
+
         self.s1__lb_1 = QtWidgets.QLabel()
         self.s1__box_1 = QtWidgets.QPushButton()
         self.s1__box_1.setAutoRepeatInterval(100)

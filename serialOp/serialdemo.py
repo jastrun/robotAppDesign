@@ -92,13 +92,14 @@ class Pyqt5_Serial(QtWidgets.QWidget, Ui_Form):
         if self.ser.isOpen():
             self.open_button.setEnabled(False)
             self.close_button.setEnabled(True)
-            self.formGroupBox1.setTitle("串口状态（已开启）")
+            self.serialstateLabel.setText("串口状态（已开启）")
 
     # 关闭串口
     def port_close(self):
         self.timer.stop()
         self.timer_send.stop()
         try:
+
             self.ser.close()
         except:
             pass
@@ -110,7 +111,7 @@ class Pyqt5_Serial(QtWidgets.QWidget, Ui_Form):
         self.lineEdit.setText(str(self.data_num_received))
         self.data_num_sended = 0
         self.lineEdit_2.setText(str(self.data_num_sended))
-        self.formGroupBox1.setTitle("串口状态（已关闭）")
+        self.serialstateLabel.setText("串口状态（已关闭）")
 
     # 发送数据
     def data_send(self):
