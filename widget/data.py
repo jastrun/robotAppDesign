@@ -1,4 +1,0 @@
-
-
-global cur
-global db
