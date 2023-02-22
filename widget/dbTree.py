@@ -73,8 +73,9 @@ class dbTree(QTreeWidget):
         dialog.robotinfo_signal.connect(self.acceptNewRobot)
         dialog.exec_()
 
-    def acceptNewRobot(self, num, name):
+    def acceptNewRobot(self, num, name,type):
         temprobot = SixAxisRobot(self.db, num,name)
+        print(type)
         self.robotList.append(temprobot)
 
     def deleteRobot(self):
