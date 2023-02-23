@@ -1,6 +1,7 @@
 from db.dbTree import *
 from serialOp.serialdemo import *
 import pyqtgraph as pg
+from graph import *
 
 # 连接数据库
 try:
@@ -17,11 +18,13 @@ except pymysql.Error as e:
 
 
 class mainWindow(QMainWindow, Pyqt5_Serial):
+
     def __init__(self):
         super().__init__()
         self.robotTree = dbTree(db)  # 获取数据库部分的树
         self.serialWidget = self.initSerial()  # 获取串口部分设置的窗口
-        self.pw = self.initGraph()
+        self.graph = graphDemo(self)
+ #       self.pw = self.initGraph()
         self.initUI()
 
     def initUI(self):
@@ -38,7 +41,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         # 设置机器人数据库树
         splitter1.addWidget(self.robotTree)
         #  添加绘图区
-        splitter1.addWidget(self.pw)
+        splitter1.addWidget(self.graph)
 
         splitter2.addWidget(splitter1)
         # 添加串口
@@ -67,6 +70,20 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         dbAct_deleteRobot = QAction('删除机器人', self)  # 创建动作
         dbmenu.addAction(dbAct_deleteRobot)  # 添加动作
         dbAct_deleteRobot.triggered.connect(self.robotTree.deleteRobot)  # 关联相关操作
+
+        graphmenu = menubar.addMenu("图")
+
+        graAct_creatGra = QAction('新建图', self)  # 创建动作
+        graphmenu.addAction(graAct_creatGra)  # 添加动作
+        graAct_creatGra.triggered.connect(self.graph.graSlot_creatGra)  # 关联相关操作
+
+        graAct_CascadeMode = QAction('级联模式', self)  # 创建动作
+        graphmenu.addAction(graAct_CascadeMode)  # 添加动作
+        graAct_CascadeMode.triggered.connect(self.graph.graSlot_CascadeMode)  # 关联相关操作
+
+        graAct_TabMode = QAction('平铺模式', self)  # 创建动作
+        graphmenu.addAction(graAct_TabMode)  # 添加动作
+        graAct_TabMode.triggered.connect(self.graph.graSlot_TabMode)  # 关联相关操作
 
     def initSerial(self):
         serialWidget = QWidget()  # 串口窗口
@@ -107,20 +124,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
 
     def initGraph(self):
         # 绘图部分页面布置
-        pw = pg.PlotWidget()
-        pw.setTitle("气温趋势", color='008080', size='12pt')
-        # 设置上下左右的label
-        pw.setLabel("left", "气温(摄氏度)")
-        pw.setLabel("bottom", "时间")
-        # 背景色改为白色
-        pw.setBackground('w')
-        hour = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        temperature = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45]
 
-        # hour 和 temperature 分别是 : x, y 轴上的值
-        pw.plot(hour,
-                temperature,
-                pen=pg.mkPen('b')  # 线条颜色
-                )
+        pw = pg.PlotWidget()
 
         return pw
