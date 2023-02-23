@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtWidgets import *
 import pyqtgraph as pg
+from creatSubGraph import *
 
 from graph_ui import Ui_Form
 
@@ -20,9 +21,17 @@ class graphDemo(QWidget, Ui_Form):
 
     # 槽
     def graSlot_creatGra(self):
-        subGraph = pg.PlotWidget()
-#        self.graphWinDic
-        self.midArea.addSubWindow(subGraph)
+        dialog = creatSubGraph(self)
+        dialog.graphInfo_signal.connect(self.acceptNewGraph)
+        dialog.exec_()
+
+    def acceptNewGraph(self, title, port):
+        subWin = QMdiSubWindow()  # 创建子窗口
+        subGraph = pg.PlotWidget()  # 创建绘图窗口
+        subWin.setWidget(subGraph)  # 将绘图添加到子窗口中和
+        subWin.setWindowTitle(title)  # 设置标题
+        self.graphWinDic[title] = port  # 关联端口并将键值对存储到字典中
+        self.midArea.addSubWindow(subWin)  # 将子窗口添加到MDI中
         subGraph.show()
 
     def graSlot_TabMode(self):
