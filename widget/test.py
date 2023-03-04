@@ -1,55 +1,78 @@
-from PyQt5 import QtWidgets
-import pyqtgraph as pg
-import sys
-
-class MainWindow(QtWidgets.QWidget):
-
-    def __init__(self):
-        super().__init__()
-
-        self.setWindowTitle('pyqtgraph作图示例')
-
-        # 创建 PlotWidget 对象
-        self.pw = pg.PlotWidget()
-
-        # 设置图表标题
-        self.pw.setTitle("气温趋势",color='008080',size='12pt')
-
-        # 设置上下左右的label
-        self.pw.setLabel("left","气温(摄氏度)")
-        self.pw.setLabel("bottom","时间")
-        # 背景色改为白色
-        self.pw.setBackground('w')
+import serial
+import threading
+import time
 
 
-        hour = [1,2,3,4,5,6,7,8,9,10]
-        temperature = [30,32,34,32,33,31,29,32,35,45]
+# 串口打开函数
+def open_ser():
+    port = 'com7'  # 串口号
+    baudrate = 9600  # 波特率
+    try:
+        global ser
+        ser = serial.Serial(port, baudrate, timeout=0.01,xonxoff=False)
+        if (ser.isOpen() == True):
+            print("串口打开成功")
+    except Exception as exc:
+        print("串口打开异常", exc)
 
-        # hour 和 temperature 分别是 : x, y 轴上的值
-        self.pw.plot(hour,
-                     temperature,
-                     pen=pg.mkPen('b') # 线条颜色
-                    )
 
-        # 创建其他Qt控件
-        okButton = QtWidgets.QPushButton("OK")
-        lineEdit = QtWidgets.QLineEdit('点击信息')
-        # 水平layout里面放 edit 和 button
-        hbox = QtWidgets.QHBoxLayout()
-        hbox.addWidget(lineEdit)
-        hbox.addWidget(okButton)
+# 数据发送
+def send_msg():
+    try:
+        send_datas = input("请输入要发送的数据\n")
+        ser.write(str(send_datas).encode("gbk"))
+        print("已发送数据:", send_datas)
+    except Exception as exc:
+        print("发送异常", exc)
 
-        # 垂直layout里面放 pyqtgraph图表控件 和 前面的水平layout
-        vbox = QtWidgets.QVBoxLayout()
-        vbox.addWidget(self.pw)
-        vbox.addLayout(hbox)
 
-        # 设置全局layout
-        self.setLayout(vbox)
+# 接收数据
+def read_msg():
+    try:
+        print("等待接收数据")
+        while True:
+            data = ser.read(ser.inWaiting()).decode('gbk')
+
+ #           print(ser.in_waiting)
+            if data != '':
+                break
+        print("已接受到数据:", data)
+        print(type(data))
+    except Exception as exc:
+        print("读取异常", exc)
+
+
+def read():
+    data = ser.read(ser.in_waiting)
+    print(ser.in_waiting)
+    if data != '':
+        return
+    else:
+        print("已接受到数据:", str(data))
+
+
+# 关闭串口
+def close_ser():
+    try:
+        ser.close()
+        if ser.isOpen():
+            print("串口未关闭")
+        else:
+            print("串口已关闭")
+    except Exception as exc:
+        print("串口关闭异常", exc)
+
 
 if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    main = MainWindow()
-    main.show()
-    sys.exit(app.exec_())
+    open_ser()  # 打开串口
 
+
+#    a = threading.Thread(target=read_msg, name='aa')
+#    a.start()
+
+
+
+    while True:
+        read_msg()
+    read_msg()
+    close_ser()  # 关闭串口
