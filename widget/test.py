@@ -74,5 +74,6 @@ if __name__ == '__main__':
 
     while True:
         read_msg()
+        pass
     read_msg()
     close_ser()  # 关闭串口
