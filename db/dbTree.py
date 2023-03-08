@@ -1,5 +1,6 @@
 from db.sheetOp import *
 from db.creatRobotWidget import *
+import os
 
 
 class dbTree(QTreeWidget):
@@ -34,12 +35,17 @@ class dbTree(QTreeWidget):
         for num, name in robotSheet:
             # 添加机器人
             robot = QTreeWidgetItem(self.root)
+            if name == '六轴工业机器人':
+                robot.setIcon(1, QIcon(os.getcwd() + "\\..\\image\\工业机器人.png"))
+            elif name=='机器人':
+                robot.setIcon(1, QIcon(os.getcwd() + "\\..\\image\\机器人.png"))
             robot.setText(0, num)
             robot.setText(1, name)
             # 查询运动节点表格
             motorSheet = SheetQuary(db, 'motor', 'where ofRobotNum={}'.format(num))
             for name in motorSheet:
                 motor = QTreeWidgetItem(robot)
+                motor.setIcon(1, QIcon(os.getcwd() + "\\..\\image\\轴承.png"))
                 motor.setText(0, name[0])
         self.db.commit()
         # 更新总列表
@@ -56,8 +62,9 @@ class dbTree(QTreeWidget):
         dialog.exec_()
 
     def acceptNewRobot(self, num, name, type):
-        temprobot = SixAxisRobot(self.db, num, name)
         print(type)
+        if type == ' 六轴工业机器人':
+            temprobot = SixAxisRobot(self.db, num, name)
         self.robotList.append(temprobot)
         # 同步数据库
         self.TBdb()

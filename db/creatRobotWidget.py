@@ -17,17 +17,20 @@ class creatRobotWidget(QDialog):
     def initUI(self):
         self.setWindowTitle("创建机器人")
         layout = QFormLayout()
-        btns = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
 
         self.nameEdit.setPlaceholderText("请输入名称")
-        self.numEdit.setPlaceholderText("请输入编码(数字)")
+        self.numEdit.setPlaceholderText("请输入编码")
         self.numEdit.setValidator(QRegExpValidator(QRegExp("[0-9]*$"), self))
         self.typeofrobot.addItem("六轴工业机器人")
         self.typeofrobot.currentText()
 
         layout.addRow("机器人标签", self.nameEdit)
         layout.addRow("机器人编码", self.numEdit)
+
+
         layout.addRow("机器人种类", self.typeofrobot)
+
+        btns = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         layout.addWidget(btns)
         self.setLayout(layout)
 

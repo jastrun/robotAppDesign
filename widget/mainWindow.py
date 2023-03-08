@@ -2,7 +2,9 @@ from db.dbTree import *
 from serialOp.serialdemo import *
 import pyqtgraph as pg
 from graph import *
-
+import os
+from PyQt5.QtGui import QIcon
+import ctypes
 # 连接数据库
 try:
     db = pymysql.connect(host="localhost",
@@ -27,11 +29,15 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
  #       self.pw = self.initGraph()
         self.initUI()
 
+
     def initUI(self):
         # 主布局窗口
         mainWidget = QWidget()
         # 设置标题
         self.setWindowTitle('机器人运动信息存储与显示工具')
+        # 图标设置
+        self.setWindowIcon(QIcon(os.getcwd()+"\\..\\image\\机器人.png"))
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(os.getcwd()+"\\..\\image\\机器人.png")
         # 菜单栏设置
         self.initMenuBar()
         # 创建可拖拽的条
@@ -42,6 +48,8 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         splitter1.addWidget(self.robotTree)
         #  添加绘图区
         splitter1.addWidget(self.graph)
+
+        splitter1.setStretchFactor(10,1)
 
         splitter2.addWidget(splitter1)
         # 添加串口
@@ -56,34 +64,40 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.show()
 
     def initMenuBar(self):
-        menubar = self.menuBar()
-        dbmenu = menubar.addMenu("数据库")
+        self.menubar = self.menuBar()
+        self.menubar.addMenu(QIcon(os.getcwd()+"\\..\\image\\机器人.png"),"工具")
 
-        dbAct_syndb = QAction('同步数据库到树', self)  # 创建动作
-        dbmenu.addAction(dbAct_syndb)  # 添加动作
-        dbAct_syndb.triggered.connect(self.robotTree.TBdb)  # 关联相关操作
 
-        dbAct_newRobot = QAction('新建机器人', self)  # 创建动作
-        dbmenu.addAction(dbAct_newRobot)  # 添加动作
-        dbAct_newRobot.triggered.connect(self.robotTree.creatRobot)  # 关联相关操作
 
-        dbAct_deleteRobot = QAction('删除机器人', self)  # 创建动作
-        dbmenu.addAction(dbAct_deleteRobot)  # 添加动作
-        dbAct_deleteRobot.triggered.connect(self.robotTree.deleteRobot)  # 关联相关操作
 
-        graphmenu = menubar.addMenu("图")
+        self.dbmenu = self.menubar.addMenu("数据库")
 
-        graAct_creatGra = QAction('新建图', self)  # 创建动作
-        graphmenu.addAction(graAct_creatGra)  # 添加动作
-        graAct_creatGra.triggered.connect(self.graph.graSlot_creatGra)  # 关联相关操作
+        self.dbAct_syndb = QAction(QIcon(os.getcwd()+"\\..\\image\\数据库.png"),'同步数据库到树', self)  # 创建动作
+        self.dbmenu.addAction(self.dbAct_syndb)  # 添加动作
+        self.dbAct_syndb.triggered.connect(self.robotTree.TBdb)  # 关联相关操作
 
-        graAct_CascadeMode = QAction('级联模式', self)  # 创建动作
-        graphmenu.addAction(graAct_CascadeMode)  # 添加动作
-        graAct_CascadeMode.triggered.connect(self.graph.graSlot_CascadeMode)  # 关联相关操作
+        self.dbAct_newRobot = QAction(QIcon(os.getcwd()+"\\..\\image\\新建机器人.png"),'新建机器人', self)  # 创建动作
+        self.dbmenu.addAction(self.dbAct_newRobot)  # 添加动作
+        self.dbAct_newRobot.triggered.connect(self.robotTree.creatRobot)  # 关联相关操作
 
-        graAct_TabMode = QAction('平铺模式', self)  # 创建动作
-        graphmenu.addAction(graAct_TabMode)  # 添加动作
-        graAct_TabMode.triggered.connect(self.graph.graSlot_TabMode)  # 关联相关操作
+        self.dbAct_deleteRobot = QAction(QIcon(os.getcwd()+"\\..\\image\\删除机器人.png"),'删除机器人', self)  # 创建动作
+        self.dbmenu.addAction(self.dbAct_deleteRobot)  # 添加动作
+        self.dbAct_deleteRobot.triggered.connect(self.robotTree.deleteRobot)  # 关联相关操作
+
+        self.graphmenu = self.menubar.addMenu("图")
+
+        self.graAct_creatGra = QAction(QIcon(os.getcwd()+"\\..\\image\\新建机器人.png"),'新建图', self)  # 创建动作
+        self.graphmenu.addAction(self.graAct_creatGra)  # 添加动作
+        self.graAct_creatGra.triggered.connect(self.graph.graSlot_creatGra)  # 关联相关操作
+
+        self.graAct_CascadeMode = QAction(QIcon(os.getcwd()+"\\..\\image\\级联.png"),'级联模式', self)  # 创建动作
+        self.graphmenu.addAction(self.graAct_CascadeMode)  # 添加动作
+        self.graAct_CascadeMode.triggered.connect(self.graph.graSlot_CascadeMode)  # 关联相关操作
+
+        self.graAct_TabMode = QAction(QIcon(os.getcwd()+"\\..\\image\\平铺.png"),'平铺模式', self)  # 创建动作
+        self.graphmenu.addAction(self.graAct_TabMode)  # 添加动作
+        self.graAct_TabMode.triggered.connect(self.graph.graSlot_TabMode)  # 关联相关操作
+
 
     def initSerial(self):
         serialWidget = QWidget()  # 串口窗口
@@ -128,3 +142,5 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         pw = pg.PlotWidget()
 
         return pw
+
+

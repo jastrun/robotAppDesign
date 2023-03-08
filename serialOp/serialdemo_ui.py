@@ -20,7 +20,7 @@ class Ui_Form(object):
         self.s1__lb_1 = QtWidgets.QLabel()
         self.s1__box_1 = QtWidgets.QPushButton()
         self.s1__box_1.setAutoRepeatInterval(100)
-        self.s1__box_1.setDefault(True)
+ #       self.s1__box_1.setDefault(True)
         self.s1__box_1.setObjectName("s1__box_1")
         self.s1__lb_2 = QtWidgets.QLabel()
         self.s1__lb_2.setObjectName("s1__lb_2")
