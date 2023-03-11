@@ -16,7 +16,7 @@ class diyStyleOfmainWindow(mainWindow.mainWindow):
     def __init__(self):
         super().__init__()
         self.adjustSize()
-        str=os.getcwd()+"\\..\\qssStyle\\new1.qss"
+        str=os.getcwd()+"\\..\\qssStyle\\new7.qss"
         qssStyle = readQss(str)
         self.setStyleSheet(qssStyle)
 

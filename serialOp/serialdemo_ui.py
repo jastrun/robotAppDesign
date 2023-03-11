@@ -7,10 +7,12 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QAction
 
 
 class Ui_Form(object):
     def setupUi(self, Form):
+
 
         Form.setObjectName("Form")
         Form.resize(707, 458)
@@ -118,6 +120,8 @@ class Ui_Form(object):
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
+
+
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate

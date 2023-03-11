@@ -2,7 +2,7 @@ import sys
 import serial
 import serial.tools.list_ports
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QAction
 from PyQt5.QtCore import QTimer
 from serialOp.serialdemo_ui import Ui_Form
 
@@ -53,6 +53,8 @@ class Pyqt5_Serial(QtWidgets.QWidget, Ui_Form):
         # 清除接收窗口
         self.s2__clear_button.clicked.connect(self.receive_data_clear)
 
+
+
     # 串口检测
     def port_check(self):
         # 检测所有存在的串口，将信息存储在字典中
@@ -74,12 +76,14 @@ class Pyqt5_Serial(QtWidgets.QWidget, Ui_Form):
 
     # 打开串口
     def port_open(self):
+        print('1')
         self.ser.port = self.s1__box_2.currentText()
         self.ser.baudrate = int(self.s1__box_3.currentText())
         self.ser.bytesize = int(self.s1__box_4.currentText())
         self.ser.stopbits = int(self.s1__box_6.currentText())
         self.ser.parity = self.s1__box_5.currentText()
 
+        print('2')
         try:
             self.ser.open()
         except:
@@ -92,8 +96,11 @@ class Pyqt5_Serial(QtWidgets.QWidget, Ui_Form):
         if self.ser.isOpen():
             self.open_button.setEnabled(False)
             self.close_button.setEnabled(True)
-            self.serialstateLabel.setText("串口状态（已开启）")
+            print('3')
 
+            print(self.serialstateLabel.setText("串口状态（已开启）"))
+            print(self.serialstateLabel.text())
+            print('4')
     # 关闭串口
     def port_close(self):
         self.timer.stop()

@@ -5,6 +5,8 @@ import mainWindow
 import mainWindowStyle
 from qt_material import apply_stylesheet
 
+from CallTitleTest import TitleWindow
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 

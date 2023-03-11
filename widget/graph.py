@@ -28,6 +28,7 @@ class graphDemo(QWidget, Ui_Form):
     def acceptNewGraph(self, title, port):
         subWin = QMdiSubWindow()  # 创建子窗口
         subGraph = pg.PlotWidget()  # 创建绘图窗口
+        subGraph.setBackground('w')
         subWin.setWidget(subGraph)  # 将绘图添加到子窗口中和
         subWin.setWindowTitle(title)  # 设置标题
         self.graphWinDic[title] = port  # 关联端口并将键值对存储到字典中

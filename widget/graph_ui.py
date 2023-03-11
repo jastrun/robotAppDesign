@@ -13,7 +13,7 @@ class Ui_Form(object):
         self.layout = QVBoxLayout()
 
         self.midArea = QMdiArea()
-        self.midArea.setViewMode(QMdiArea.TabbedView)
+   #     self.midArea.setViewMode(QMdiArea.TabbedView)
 
         self.layout.addWidget(self.midArea)
         Form.setLayout(self.layout)
