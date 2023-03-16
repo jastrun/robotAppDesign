@@ -62,7 +62,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         #  添加绘图区
  #       splitter1.addWidget(self.graph)
         self.webview = QWebEngineView(self)
-        url="D:/莫愁/Documents/pythonproj/robotAPP/widget/test.html"
+        url="D:/莫愁/Documents/pythonproj/robotAPP/html1/index.html"
         self.webview.load(QUrl(url))
         splitter1.addWidget(self.webview)
 

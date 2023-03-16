@@ -5,13 +5,23 @@
     <title>ECharts</title>
     <!-- 引入刚刚下载的 ECharts 文件 -->
     <script src="echarts.js"></script>
+    <script src="axisAngle.js"></script>
   </head>
   <body>
-    <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
-    <div id="main" style="width: 600px;height:400px;"></div>
-    <script src="Aspeed.js">
+  <div id="axisAngle" style="width: 800px;height:300px;float:left;background-color: black">
+          <!-- 展示各轴角度 -->
+          <div id="xAngle" style="width: 250px;height:200px;float:left;">
+            <script>angleDisply(80,'xAngle');</script>
+          </div>
 
-    </script>
+          <div id="yAngle" style="width: 250px;height:200px;float:left;">
+            <script>angleDisply(60,'yAngle');</script>
+          </div>
+
+          <div id="zAngle" style="width: 250px;height:200px;float:left;">
+            <script>angleDisply(60,'zAngle');</script>
+          </div>
+  </div>
 
   </body>
 </html>

@@ -29,7 +29,7 @@ class sixRobot(gl.GLViewWidget):
                             [1, 1, 1],
                             [1, 1, 1],
                             [1, 1, 1],
-                            [1, 1, 1],
+                            [1, -1, 1],
                             [1, 1, 1]]
         self.resize(1200, 800)
         self.structself(self.initbsposition)  # 构造自身机械臂
