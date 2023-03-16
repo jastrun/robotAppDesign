@@ -8,7 +8,6 @@ def readQss(style):
     with open(style, 'r') as f:
         return f.read()
 
-
 class creatSubGraph(QDialog):
     graphInfo_signal = pyqtSignal(str, str)
 
@@ -19,11 +18,12 @@ class creatSubGraph(QDialog):
 
         self.initUI()
 
-
     def initUI(self):
         self.setWindowTitle("创建新绘图")
-        self.setWindowIcon(QIcon(os.getcwd() + "\\..\\image\\绘图.png"))
         layout = QFormLayout()
+        str = os.getcwd() + "\\..\\qssStyle\\new7.qss"
+        qssStyle = readQss(str)
+        self.setStyleSheet(qssStyle)
 
         self.titleEdit.setPlaceholderText("请输入标题")
         self.portEdit.setPlaceholderText("请输入端口")
@@ -34,9 +34,6 @@ class creatSubGraph(QDialog):
         btns = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         layout.addWidget(btns)
         self.setLayout(layout)
-        str = os.getcwd() + "\\..\\qssStyle\\new7.qss"
-        qssStyle = readQss(str)
-        self.setStyleSheet(qssStyle)
 
         btns.accepted.connect(self.accept)
         btns.rejected.connect(self.reject)
