@@ -1,17 +1,17 @@
-
-from PyQt5.QtWebEngineWidgets import *
-
 from db.dbTree import *
-from serialConfig import serialConfig
+from serialOp.serialConfig import serialConfig
 from serialOp.serialdemo import *
-import pyqtgraph as pg
 from graph import *
 import os
 from PyQt5.QtGui import QIcon
 import ctypes
 from tabWidget import *
+from graphMDI import *
 
+def readQss(style):
 
+    with open(style, 'r') as f:
+        return f.read()
 # 连接数据库
 try:
     db = pymysql.connect(host="localhost",
@@ -30,8 +30,10 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
 
     def __init__(self):
         super().__init__()
+        self.tab = TabDemo()
         self.dbToolBar = self.addToolBar("db")
         self.robotTree = dbTree(db)  # 获取数据库部分的树
+        self.robotTree.setMinimumWidth(350)
         self.serialWidget = self.initSerial()  # 获取串口部分设置的窗口
         self.graph = graphDemo(self)
         #       self.pw = self.initGraph()
@@ -40,6 +42,9 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
     def initUI(self):
         # 主布局窗口
         mainWidget = QWidget()
+        str = os.getcwd() + "\\..\\qssStyle\\new7.qss"
+        qssStyle = readQss(str)
+        self.setStyleSheet(qssStyle)
         # 设置标题
         self.setWindowTitle('机器人运动信息存储与显示工具')
         # 图标设置
@@ -66,8 +71,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
 #        url="D:/莫愁/Documents/pythonproj/robotAPP/html1/index.html"
 #        self.webview.load(QUrl(url))
 #        splitter1.addWidget(self.webview)
-        tab = TabDemo()
-        splitter1.addWidget(tab)
+        splitter1.addWidget(self.tab)
 
         # 设置串口窗口
         self.serialConfigDialog = serialConfig(self)
@@ -113,15 +117,15 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
 
         self.graAct_creatGra = QAction(QIcon(os.getcwd() + "\\..\\image\\绘图.png"), '新建图', self)  # 创建动作
         self.graphmenu.addAction(self.graAct_creatGra)  # 添加动作
-        self.graAct_creatGra.triggered.connect(self.graph.graSlot_creatGra)  # 关联相关操作
+        self.graAct_creatGra.triggered.connect(self.tab.graphMdi.graSlot_creatGra)  # 关联相关操作
 
         self.graAct_CascadeMode = QAction(QIcon(os.getcwd() + "\\..\\image\\级联.png"), '级联模式', self)  # 创建动作
         self.graphmenu.addAction(self.graAct_CascadeMode)  # 添加动作
-        self.graAct_CascadeMode.triggered.connect(self.graph.graSlot_CascadeMode)  # 关联相关操作
+        self.graAct_CascadeMode.triggered.connect(self.tab.graphMdi.graSlot_CascadeMode)  # 关联相关操作
 
         self.graAct_TabMode = QAction(QIcon(os.getcwd() + "\\..\\image\\平铺.png"), '平铺模式', self)  # 创建动作
         self.graphmenu.addAction(self.graAct_TabMode)  # 添加动作
-        self.graAct_TabMode.triggered.connect(self.graph.graSlot_TabMode)  # 关联相关操作
+        self.graAct_TabMode.triggered.connect(self.tab.graphMdi.graSlot_TabMode)  # 关联相关操作
         # 串口窗口
         self.serialmenu = self.menubar.addMenu("串口")
 

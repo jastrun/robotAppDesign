@@ -4,6 +4,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import *
 from ThreeDeRobot import *
+from graphMDI import *
 
 class TabDemo(QTabWidget):
     def __init__(self,parent=None):
@@ -31,8 +32,8 @@ class TabDemo(QTabWidget):
         self.webview = QWebEngineView(self)
         url="D:/莫愁/Documents/pythonproj/robotAPP/html1/index.html"
         self.webview.load(QUrl(url))
+        self.webview.setZoomFactor(0.8)
         layout.addWidget(self.webview)
-
         self.setTabText(0,'静态信息')
         self.tab1.setLayout(layout)
 
@@ -52,10 +53,8 @@ class TabDemo(QTabWidget):
         #水平布局
         layout=QHBoxLayout()
 
-        #添加控件到布局中
-        layout.addWidget(QLabel('科目'))
-        layout.addWidget(QCheckBox('物理'))
-        layout.addWidget(QCheckBox('高数'))
+        self.graphMdi = graphMDI()
+        layout.addWidget(self.graphMdi)
 
         #设置小标题与布局方式
         self.setTabText(2,'教育程度')

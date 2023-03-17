@@ -15,10 +15,6 @@ def readQss(style):
 class diyStyleOfmainWindow(mainWindow.mainWindow):
     def __init__(self):
         super().__init__()
-        self.adjustSize()
-        str=os.getcwd()+"\\..\\qssStyle\\new7.qss"
-        qssStyle = readQss(str)
-        self.setStyleSheet(qssStyle)
 
-    def adjustSize(self):
-        self.robotTree.setMinimumWidth(350)
+
+
