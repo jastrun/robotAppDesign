@@ -20,7 +20,7 @@ function highlightMenu(no) {
 function setupGallery() {
   gallery = $('.gallery-slider').slick({
     slidesToShow: 5,
-    slidesToScroll: 3,
+    slidesToScroll: 5,
     dots: true,
     arrows: false,
     responsive: [

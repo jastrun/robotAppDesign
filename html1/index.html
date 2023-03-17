@@ -9,6 +9,16 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/slick.css" type="text/css" /> 
     <link rel="stylesheet" href="css/templatemo-style.css">
+    <!-- 引入刚刚下载的 ECharts 文件 -->
+    <script src="echarts.js"></script>
+    <script src="axisAngle.js"></script>
+    <script src="oilRemained.js"></script>
+    <script src="echarts-liquidfill.js"></script>
+    <script src="echarts-gl.js"></script>
+    <script src="echarts-gl.min.js"></script>
+    <script src="3dAxis.js"></script>
+    <script src="angleLine.js"></script>
+
 <!--
     
 TemplateMo 560 Astro Motion
@@ -34,28 +44,28 @@ https://templatemo.com/tm-560-astro-motion
                   <div class="collapse navbar-collapse" id="navbar-supported-content">
                     <ul class="navbar-nav mb-2 mb-lg-0">
                       <li class="nav-item selected">
-                        <a class="nav-link" aria-current="page" href="#0" data-no="1">Home</a>
+                        <a class="nav-link" aria-current="page" href="#0" data-no="1">主页</a>
                         <div class="circle"></div>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="#0" data-no="2">Gallery</a>
+                        <a class="nav-link" href="#0" data-no="2">基本信息</a>
                         <div class="circle"></div>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="#0" data-no="3">About</a>
+                        <a class="nav-link" href="#0" data-no="3">运动波形</a>
                         <div class="circle"></div>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="#0" data-no="4">Contact</a>
+                        <a class="nav-link" href="#0" data-no="4">关于毕设</a>
                         <div class="circle"></div>
                       </li>
                     </ul>
                   </div>
               </nav>
             </div>
-          </div>          
-        </div>        
-      </div>      
+          </div>
+        </div>
+      </div>
       <div class="container-fluid tm-content-container">
         <ul class="cd-hero-slider mb-0 py-5">
           <li class="px-3" data-page-no="1">
@@ -67,24 +77,25 @@ https://templatemo.com/tm-560-astro-motion
                     This HTML template has a motion video background loop which is provided by <a rel="sponsored" href="https://getfreepictures.com" target="_blank">Get Free Pictures</a>. This is
                     one-page responsive layout for your websites. Feel
                   free to use this for a commercial purpose. </p>
-                  <p class="mb-0">
-                  You are not permitted to redistribute this template on your Free CSS collection websites. Please <a rel="nofollow" href="https://templatemo.com/contact" target="_blank">contact us</a> for more information. </p>
+
                 </div>
                 <div class="intro-right">
-                  <img src="img/home-img-1.jpg" alt="Image" class="img-fluid intro-img-1">
-                  <img src="img/home-img-2.jpg" alt="Image" class="img-fluid intro-img-2">
+                    <div id="3dAxis0" class="effect-julia item" style="width: 500px;height:500px;float:right;">
+                      <script>coDisply(60,'3dAxis0');</script>
+                    </div>
                 </div>
                 <div class="circle intro-circle-1"></div>
                 <div class="circle intro-circle-2"></div>
                 <div class="circle intro-circle-3"></div>
                 <div class="circle intro-circle-4"></div>
               </div>
+
               <div class="text-center">
                 <a href="#0" data-page-no="2" class="btn btn-primary tm-intro-btn tm-page-link">
                   View Gallery
                 </a>
-              </div>            
-            </div>            
+              </div>
+            </div>
           </li>
           <li data-page-no="2">
             <!-- Image Carousel -->
@@ -92,23 +103,60 @@ https://templatemo.com/tm-560-astro-motion
               <div class="circle intro-circle-1"></div>
               <div class="circle intro-circle-2"></div>
               <div class="mx-auto tm-border-top gallery-slider">
-                <figure class="effect-julia item">
-                    <img src="img/gallery-img-01.jpg" alt="Image">
+             <!-- 机器人轴1剩余油量 -->
+                <figure  class="effect-julia item">
+                    <div id="oil1" class="effect-julia item" style="width: 240px;height:320px;float:left;">
+                      <script>oilDisply(0.6,'oil1');</script>
+                    </div>
                     <figcaption>
                         <div>
-                            <p>Julia dances in the deep dark</p>
+                            <p>轴1:剩余油量</p>
                         </div>
                         <a href="#">View more</a>
                     </figcaption>
                 </figure>
-                <figure class="effect-julia item">
-                    <img src="img/gallery-img-02.jpg" alt="Image">
+                  <!-- 机器人x轴角度 -->
+                <figure  class="effect-julia item">
+                    <div id="xAngle1" class="effect-julia item" style="width: 240px;height:320px;float:left;">
+                      <script>angleDisply(350,'xAngle1');</script>
+                    </div>
                     <figcaption>
                         <div>
-                            <p>Julia dances in the deep dark</p>
+                            <p>轴1:x轴角度</p>
                         </div>
                         <a href="#">View more</a>
                     </figcaption>
+                </figure>
+
+                   <!-- 机器人y轴角度 -->
+                <figure  class="effect-julia item",>
+                    <div id="yAngle1" class="effect-julia item" style="width: 240px;height:320px;float:left;background-color: transparent">
+                      <script>angleDisply(40,'yAngle1');</script>
+                    </div>
+                    <figcaption>
+                        <div>
+                            <p>轴1:y轴角度</p>
+                        </div>
+                        <a href="#">View more</a>
+                    </figcaption>
+                </figure>
+
+                <figure class="effect-julia item">
+                    <div id="zAngle1" class="effect-julia item" style="width: 240px;height:320px;float:left;">
+                      <script>angleDisply(60,'zAngle1');</script>
+                    </div>
+                    <figcaption>
+                        <div>
+                            <p>轴1:z轴角度/p>
+                        </div>
+                        <a href="#">View more</a>
+                    </figcaption>
+                </figure>
+
+                  <figure >
+                    <div id="3dAxis1" class="effect-julia item" style="width: 240px;height:320px;float:left;">
+                      <script>coDisply(60,'3dAxis1');</script>
+                    </div>
                 </figure>
                 <figure class="effect-julia item">
                     <img src="img/gallery-img-03.jpg" alt="Image">
@@ -182,16 +230,10 @@ https://templatemo.com/tm-560-astro-motion
               <div class="circle intro-circle-2"></div>
               <div class="circle intro-circle-3"></div>
               <div class="circle intro-circle-4"></div>
-              <div class="tm-bg-dark content-pad">
-                <h2 class="mb-4">About our company</h2>
-                <p class="mb-4">
-                  You are <span class="highlight">allowed</span> to use Astro Motion HTML Template for your websites. You are not allowed to re-distribute this template ZIP file on any Free CSS template collection website. Illegal redistribution is strongly prohibited.
-                </p>
-                <p>
-                  Praesent auctor rhoncus arcu, vitae blandit est vestibulum sit amet. Integer erat
-                  turpis, vestibulum pellentesque aliquam ultricies, finibus nec dui. Donec bibendum
-                  enim mi, at tristique leo feugiat at. Thank you for visiting Template Mo.
-                </p>
+              <div >
+                    <div id="angleLine" class="effect-julia item" style="width: 800px;height:600px;background-color: white">
+                      <script>angleLineDisply(60,'angleLine');</script>
+                    </div>
               </div>              
             </div>
           </li>

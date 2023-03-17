@@ -9,6 +9,7 @@ from graph import *
 import os
 from PyQt5.QtGui import QIcon
 import ctypes
+from tabWidget import *
 
 
 # 连接数据库
@@ -61,11 +62,12 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
 
         #  添加绘图区
  #       splitter1.addWidget(self.graph)
-        self.webview = QWebEngineView(self)
-        url="D:/莫愁/Documents/pythonproj/robotAPP/html1/index.html"
-        self.webview.load(QUrl(url))
-        splitter1.addWidget(self.webview)
-
+#        self.webview = QWebEngineView(self)
+#        url="D:/莫愁/Documents/pythonproj/robotAPP/html1/index.html"
+#        self.webview.load(QUrl(url))
+#        splitter1.addWidget(self.webview)
+        tab = TabDemo()
+        splitter1.addWidget(tab)
 
         # 设置串口窗口
         self.serialConfigDialog = serialConfig(self)
