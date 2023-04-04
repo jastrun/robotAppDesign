@@ -3,6 +3,8 @@ import time
 import datetime
 from datetime import date
 
+from readExecl import dataFile
+
 try:
     db = pymysql.connect(host="localhost",
                          user="root",
@@ -177,14 +179,15 @@ class SixAxisRobot(Robot):
     # 产生机器人运动节点
     def __generate6Motor(self, db):
         try:
-            self.motor1 = MotorOfSix('六轴001', self.num, db)
-            self.motor2 = MotorOfSix('六轴002', self.num, db)
-            self.motor3 = MotorOfSix('六轴003', self.num, db)
-            self.motor4 = MotorOfSix('六轴004', self.num, db)
-            self.motor5 = MotorOfSix('六轴005', self.num, db)
-            self.motor6 = MotorOfSix('六轴006', self.num, db)
+            self.motor1 = MotorOfSix('J1', self.num, db)
+            self.motor2 = MotorOfSix('J2', self.num, db)
+            self.motor3 = MotorOfSix('J3', self.num, db)
+            self.motor4 = MotorOfSix('J4', self.num, db)
+            self.motor5 = MotorOfSix('J5', self.num, db)
+            self.motor6 = MotorOfSix('J6', self.num, db)
         except pymysql.Error as e:
             print("创建机器人节点失败！" + str(e))
+
 
 
 # 表查询操作
@@ -206,5 +209,6 @@ def SheetQuary(db, sheetName, condition=''):
 if __name__ == "__main__":
     # 测试代码
     print(SheetQuary(db, 'motor','where ofRobotNum={}'.format('009')))
-
+    if __name__ == "__main__":
+        datafile = dataFile()
 # 若当前代码不是main则数据库不会自己关闭

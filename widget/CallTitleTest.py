@@ -10,7 +10,7 @@ from PyQt5.QtGui import QFont, QEnterEvent, QPixmap, QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QDialog, QVBoxLayout, QPushButton
 from PyQt5 import QtCore, QtWidgets
 
-import mainWindowStyle
+import mainWindow
 from TitleTest import Ui_Form
 
 
@@ -252,12 +252,12 @@ class TitleWindow(QWidget, Ui_Form):
                    '''
         self.setStyleSheet(qssStyle)
 
-
+# 去掉标题栏的窗口
 if __name__ == "__main__":
     # 适配2k等高分辨率屏幕,低分辨率屏幕可以缺省
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)
-    main = mainWindowStyle.diyStyleOfmainWindow()
+    main = mainWindow.mainWindow()
     myWin = TitleWindow(widget_2_sub=main, icon_path=None, title='Justran')
     myWin.show()
 

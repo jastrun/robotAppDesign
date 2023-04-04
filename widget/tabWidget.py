@@ -6,10 +6,14 @@ from PyQt5.QtWidgets import *
 from ThreeDeRobot import *
 from graphMDI import *
 
+
+
+
+
 class TabDemo(QTabWidget):
     def __init__(self,parent=None):
         super(TabDemo, self).__init__(parent)
-
+        self.parent=parent
         #创建3个选项卡小控件窗口
         self.tab1=QWidget()
         self.tab2=QWidget()
@@ -53,11 +57,11 @@ class TabDemo(QTabWidget):
         #水平布局
         layout=QHBoxLayout()
 
-        self.graphMdi = graphMDI()
+        self.graphMdi = graphMDI(self)
         layout.addWidget(self.graphMdi)
 
         #设置小标题与布局方式
-        self.setTabText(2,'教育程度')
+        self.setTabText(2,'波形')
         self.tab3.setLayout(layout)
 if __name__ == '__main__':
     app=QApplication(sys.argv)

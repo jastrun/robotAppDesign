@@ -27,7 +27,7 @@ class sixRobot(gl.GLViewWidget):
         self.initbsposition = initbsPosition
         self.position    = [[1, 1, 1],
                             [1, 1, 1],
-                            [1, 1, 1],
+                            [1, 1, -1],
                             [1, 1, 1],
                             [1, -1, 1],
                             [1, 1, 1]]
@@ -78,9 +78,6 @@ class sixRobot(gl.GLViewWidget):
 # 设置原点
     def setBase(self,base):
         self.originPos=base
-
-
-
 
         QtGui.QApplication.processEvents()
 

@@ -1,12 +1,12 @@
 from db.dbTree import *
 from serialOp.serialConfig import serialConfig
 from serialOp.serialdemo import *
-from graph import *
 import os
 from PyQt5.QtGui import QIcon
 import ctypes
 from tabWidget import *
 from graphMDI import *
+from readExecl import *
 
 def readQss(style):
 
@@ -30,13 +30,14 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
 
     def __init__(self):
         super().__init__()
-        self.tab = TabDemo()
-        self.dbToolBar = self.addToolBar("db")
-        self.robotTree = dbTree(db)  # 获取数据库部分的树
+        self.currentSourceLabel=QLabel("未选定")
+        self.filepath = r'data.xlsx'
+        self.datafile=dataFile(self.filepath,"工业机器人","001")
+        self.tab = TabDemo(self)  # 创建tab窗口
+        self.dbToolBar = self.addToolBar("db")  # 创建数据库工具栏
+        self.robotTree = dbTree(db,self)  # 获取数据库部分的树
         self.robotTree.setMinimumWidth(350)
         self.serialWidget = self.initSerial()  # 获取串口部分设置的窗口
-        self.graph = graphDemo(self)
-        #       self.pw = self.initGraph()
         self.initUI()
 
     def initUI(self):
@@ -66,11 +67,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
 
 
         #  添加绘图区
- #       splitter1.addWidget(self.graph)
-#        self.webview = QWebEngineView(self)
-#        url="D:/莫愁/Documents/pythonproj/robotAPP/html1/index.html"
-#        self.webview.load(QUrl(url))
-#        splitter1.addWidget(self.webview)
+
         splitter1.addWidget(self.tab)
 
         # 设置串口窗口
@@ -86,6 +83,9 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         #    self.serialdock = QDockWidget("串口", self)
         #    self.serialdock.setWidget(self.serialWidget)
         #    self.addDockWidget(Qt.BottomDockWidgetArea, self.serialdock)
+        # 设置文件
+        self.datafile.fileinfo_signal.connect(self.acceptFIleInfo)
+        self.datafile.source_signal.connect(self.sourceChange)
 
         Vlayout.addWidget(splitter2)
         mainWidget.setLayout(Vlayout)
@@ -160,6 +160,18 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.viewmenu.addAction(self.serialreceiveView)  # 添加动作
         self.serialreceiveView.triggered.connect(self.serialreceiveVisable)
 
+        # 文件窗口
+        self.filemenu = self.menubar.addMenu("链接")
+
+        self.readfileAct = QAction(QIcon(os.getcwd() + "\\..\\image\\读取模板.png"), '读取文件', self)
+        self.filemenu.addAction(self.readfileAct)  # 添加动作
+        self.readfileAct.triggered.connect(self.datafile.openFile)
+
+        self.savefileAct = QAction(QIcon(os.getcwd() + "\\..\\image\\保存.png"), '保存文件', self)
+        self.filemenu.addAction(self.savefileAct)  # 添加动作
+        self.savefileAct.triggered.connect(self.serialsendVisable)
+
+
     def port_open(self):
         super().port_open()
         if self.ser.isOpen():
@@ -202,6 +214,18 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.graphToolBar.addAction(self.serial_Open)
         self.graphToolBar.addAction(self.serial_Check)
         self.graphToolBar.addWidget(self.s1__box_2)
+
+        # 链接信息
+        self.linkInfoTooBar = QToolBar("link",self)
+        self.addToolBar(self.linkInfoTooBar)
+        self.linkInfoTooBar.addWidget(QLabel("当前源:"))
+        self.linkInfoTooBar.addWidget(self.currentSourceLabel)
+
+        self.linkAct=QAction(QIcon(os.getcwd() + "\\..\\image\\链接.png"), '链接', self)
+        self.linkInfoTooBar.addAction(self.linkAct)  # 添加动作
+        self.linkAct.triggered.connect(self.linkSource)
+
+
 
         # Using a QToolBar object and a toolbar area
         helpToolBar = QToolBar("Help", self)
@@ -280,3 +304,18 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.s1__box_4.setCurrentText(bytesize)
         self.s1__box_6.setCurrentText(stopbits)
         self.s1__box_5.setCurrentText(parity)
+
+    def acceptFIleInfo(self,path):
+        print(path)
+
+    def linkSource(self):
+        if self.currentSourceLabel=='文件':
+            self.linkFile()
+
+    def linkFile(self):
+        self.datafile
+        self.tab.graphMdi.children()
+
+
+    def sourceChange(self,source):
+        self.currentSourceLabel.setText(source)
