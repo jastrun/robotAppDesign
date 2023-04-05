@@ -12,6 +12,7 @@ class dbTree(QTreeWidget):
         self.root = QTreeWidgetItem(self)
         self.root.setText(0, "机器人数据库")
         self.robotList = []
+        self.robotdic = {}
         self.db = db
         self.initTree()
         self.header().setSectionResizeMode(QHeaderView.Stretch)
@@ -39,6 +40,8 @@ class dbTree(QTreeWidget):
         # 查询机器人表格
         robotSheet = SheetQuary(self.db, 'robot')
         print(robotSheet)
+        self.robotList = []
+        self.robotdic.clear()
         for num, name in robotSheet:
             # 添加机器人
             robot = QTreeWidgetItem(self.root)
@@ -50,16 +53,19 @@ class dbTree(QTreeWidget):
             robot.setText(1, num)
             # 查询运动节点表格
             motorSheet = SheetQuary(db, 'motor', 'where ofRobotNum={}'.format(num))
-            for name in motorSheet:
+            for mototname in motorSheet:
                 motor = QTreeWidgetItem(robot)
                 motor.setIcon(0, QIcon(os.getcwd() + "\\..\\image\\轴承.png"))
-                motor.setText(0, name[0])
+                motor.setText(0, mototname[0])
+
+            SixAxisRobotmodel=SixAxisRobot(self.db, num, name, insertOrNot=False)
+            self.robotList.append((SixAxisRobotmodel,robot))
         self.db.commit()
         # 更新总列表
-        self.robotList = []
+
         for num, name in robotSheet:
-            self.robotList.append(SixAxisRobot(self.db, num, name, insertOrNot=False))
-        item = list(robot.num for robot in self.robotList)
+            pass
+        item = list(robot for robot in self.robotList)
         print(item)
 
     # 新建机器人

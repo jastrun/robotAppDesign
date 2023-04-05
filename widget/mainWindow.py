@@ -31,8 +31,9 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
     def __init__(self):
         super().__init__()
         self.currentSourceLabel=QLabel("未选定")
-        self.filepath = r'data.xlsx'
-        self.datafile=dataFile(self.filepath,"工业机器人","001")
+        self.currentRobotLabel = QLabel("未选定")
+        self.filepath = None
+        self.datafile=dataFile()
         self.tab = TabDemo(self)  # 创建tab窗口
         self.dbToolBar = self.addToolBar("db")  # 创建数据库工具栏
         self.robotTree = dbTree(db,self)  # 获取数据库部分的树
@@ -64,6 +65,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.treedock.setWidget(self.robotTree)
         self.treedock.hide()
         self.addDockWidget(Qt.LeftDockWidgetArea, self.treedock)
+        self.robotTree.currentItemChanged.connect(self.robotlabelchange)
 
 
         #  添加绘图区
@@ -161,15 +163,17 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.serialreceiveView.triggered.connect(self.serialreceiveVisable)
 
         # 文件窗口
-        self.filemenu = self.menubar.addMenu("链接")
+        self.filemenu = self.menubar.addMenu("数据源")
 
-        self.readfileAct = QAction(QIcon(os.getcwd() + "\\..\\image\\读取模板.png"), '读取文件', self)
+        self.readfileAct = QAction(QIcon(os.getcwd() + "\\..\\image\\读取模板.png"), '文件', self)
         self.filemenu.addAction(self.readfileAct)  # 添加动作
         self.readfileAct.triggered.connect(self.datafile.openFile)
+        # 串口
+        self.filemenu.addAction(self.serial_Open)  # 添加动作
 
-        self.savefileAct = QAction(QIcon(os.getcwd() + "\\..\\image\\保存.png"), '保存文件', self)
-        self.filemenu.addAction(self.savefileAct)  # 添加动作
-        self.savefileAct.triggered.connect(self.serialsendVisable)
+        self.readnetAct = QAction(QIcon(os.getcwd() + "\\..\\image\\Ethernet.png"), '网线', self)
+        self.filemenu.addAction(self.readnetAct)  # 添加动作
+        self.readnetAct.triggered.connect(self.datafile.openFile)
 
 
     def port_open(self):
@@ -220,6 +224,11 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.addToolBar(self.linkInfoTooBar)
         self.linkInfoTooBar.addWidget(QLabel("当前源:"))
         self.linkInfoTooBar.addWidget(self.currentSourceLabel)
+        # 当前机器人
+        self.linkInfoTooBar.addWidget(QLabel("当前机器人:"))
+        self.linkInfoTooBar.addWidget(self.currentRobotLabel)
+
+
 
         self.linkAct=QAction(QIcon(os.getcwd() + "\\..\\image\\链接.png"), '链接', self)
         self.linkInfoTooBar.addAction(self.linkAct)  # 添加动作
@@ -319,3 +328,9 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
 
     def sourceChange(self,source):
         self.currentSourceLabel.setText(source)
+
+    def robotlabelchange(self,item):
+        if item.parent().text(0)=='机器人数据库':
+            self.currentRobotLabel.setText(item.text(0)+item.text(1))
+        else:
+            self.currentRobotLabel.setText(item.parent().text(0)+item.parent().text(1))

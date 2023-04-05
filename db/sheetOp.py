@@ -44,7 +44,7 @@ class AngleData(DataFormat):
     def uploadData(self, db):
         cur = db.cursor()
         try:
-            sql = "INSERT AngleData(name,time,OfMotorName,angle,angleSpeed) " \
+            sql = "INSERT AngleData(ofRobotNum,time,OfMotorName,angle,angleSpeed) " \
                   "VALUES('{}','{}','{}','{}','{}')" \
                   "".format(self.name, self.time, self.OfMotorName, self.angle, self.angleSpeed)
             cur.execute(sql)
@@ -99,9 +99,9 @@ class MotorOfSix(Motor):
         super().creatMotor(db)
 
     # 将运动单元的数据存入数据库中(dataunit表)
-    def recordData(self, name, angle, angleSpeed):
-        data = AngleData(name, self.name, angle, angleSpeed)
-        data.uploadData()
+    def recordData(self, angle, angleSpeed):
+        data = AngleData(self.ofRobotNum, self.name, angle, angleSpeed)
+        data.uploadData(db)
 
 
 # robot实体基类
@@ -205,10 +205,17 @@ def SheetQuary(db, sheetName, condition=''):
     db.commit()
     return sheetList
 
+def list2str(data):
+    str1=''
+    for i in data:
+        str1=str(i)+'*'+str1
+    return str1
 
 if __name__ == "__main__":
     # 测试代码
-    print(SheetQuary(db, 'motor','where ofRobotNum={}'.format('009')))
-    if __name__ == "__main__":
-        datafile = dataFile()
+    robotdemo=SixAxisRobot(db,'998')
+ #   print(SheetQuary(db, 'motor','where ofRobotNum={}'.format('009')))
+    datafile = dataFile(r'data.xlsx','六轴工业机器人','999')
+    dataJ1=datafile.getJ1()
+    robotdemo.motor1.recordData(list2str(dataJ1),list2str(dataJ1))
 # 若当前代码不是main则数据库不会自己关闭

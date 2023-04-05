@@ -12,14 +12,13 @@ class dataFile(QObject):
     fileinfo_signal = pyqtSignal(str)
     source_signal = pyqtSignal(str)
 
-    def __init__(self, file_path,name,num):
+    def __init__(self):
         super(dataFile,self).__init__()
-        self.name=name
-        self.num=num
-        self.file = pd.read_excel(file_path, sheet_name="Sheet1")  # sheet_name不指定时默认返回全表数据
+
+
 
     def loadData(self,file_path):
-        self.file = pd.read_excel(file_path, sheet_name="Sheet1")
+         self.file = pd.read_excel(file_path, sheet_name="Sheet1")
 
     def openFile(self):
         # 其中self指向自身，"读取文件夹"为标题名，"./"为打开时候的当前路径

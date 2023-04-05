@@ -7,19 +7,24 @@ import pyqtgraph as pg
 from creatSubGraph import *
 import numpy as np
 
+from db.sheetOp import list2str
+
 
 class graphSubWin(QMainWindow):
-    def __init__(self,motor):
+    def __init__(self,robot,robotnode,motornode,data):
         super().__init__()
         self.graph=pg.PlotWidget()
 
-        self.motor=motor.text(0)
-        self.robot = motor.parent().text(0)
-        self.robotnum=motor.parent().text(1)
+        self.motorname=motornode.text(0)
+        self.robotname = robotnode.text(0)
+        self.robotnum=robotnode.text(1)
+        self.data=data
+        self.robot=robot
 
 
 
         self.initUI()
+        self.initSlot()
 
     def initUI(self):
         self.mainWidget=QWidget()
@@ -40,12 +45,29 @@ class graphSubWin(QMainWindow):
         self.show()
 
     def initSlot(self):
-        self.save2dbBtn.clicked.connect()
+        self.save2dbBtn.clicked.connect(self.save2db)
 
     def initToolBar(self):
         self.savedataToolBar = QToolBar("保存数据", self)
         self.addToolBar(self.savedataToolBar)
    #     self.savedataToolBar.addWidget(QLabel("保存到数据库"))
+
+    def save2db(self):
+        #   print(SheetQuary(db, 'motor','where ofRobotNum={}'.format('009')))
+     #   datafile = dataFile(r'data.xlsx', '六轴工业机器人', '999')
+        if self.motorname=='J1':
+            self.robot.motor1.recordData(list2str(self.data), list2str(self.data))
+        if self.motorname=='J2':
+            self.robot.motor2.recordData(list2str(self.data), list2str(self.data))
+        if self.motorname=='J3':
+            self.robot.motor3.recordData(list2str(self.data), list2str(self.data))
+        if self.motorname=='J4':
+            self.robot.motor4.recordData(list2str(self.data), list2str(self.data))
+        if self.motorname=='J5':
+            self.robot.motor5.recordData(list2str(self.data), list2str(self.data))
+        if self.motorname=='J6':
+            self.robot.motor6.recordData(list2str(self.data), list2str(self.data))
+        print("存入成功！")
 
 
 
