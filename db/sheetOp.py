@@ -34,19 +34,20 @@ class DataFormat:
 
 # 角度数据格式
 class AngleData(DataFormat):
-    def __init__(self, name, OfMotorName, angle, angleSpeed):
+    def __init__(self, name, OfMotorName, timeserise,angle, angleSpeed):
         super().__init__(name)
         self.OfMotorName = OfMotorName
         self.angle = angle
         self.angleSpeed = angleSpeed
+        self.timeserise=timeserise
 
     # 上载数据
     def uploadData(self, db):
         cur = db.cursor()
         try:
-            sql = "INSERT AngleData(ofRobotNum,time,OfMotorName,angle,angleSpeed) " \
-                  "VALUES('{}','{}','{}','{}','{}')" \
-                  "".format(self.name, self.time, self.OfMotorName, self.angle, self.angleSpeed)
+            sql = "INSERT AngleData(ofRobotNum,time,OfMotorName,timeseries,angle,angleSpeed) " \
+                  "VALUES('{}','{}','{}','{}','{}','{}')" \
+                  "".format(self.name, self.time, self.OfMotorName, self.timeserise ,self.angle, self.angleSpeed)
             cur.execute(sql)
             # 提交数据
             db.commit()
@@ -99,8 +100,8 @@ class MotorOfSix(Motor):
         super().creatMotor(db)
 
     # 将运动单元的数据存入数据库中(dataunit表)
-    def recordData(self, angle, angleSpeed):
-        data = AngleData(self.ofRobotNum, self.name, angle, angleSpeed)
+    def recordData(self, timeserise,angle, angleSpeed):
+        data = AngleData(self.ofRobotNum, self.name, timeserise,angle, angleSpeed)
         data.uploadData(db)
 
 

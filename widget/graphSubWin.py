@@ -11,13 +11,14 @@ from db.sheetOp import list2str
 
 
 class graphSubWin(QMainWindow):
-    def __init__(self,robot,robotnode,motornode,data):
+    def __init__(self,robot,robotnode,motornode,timeseries,data):
         super().__init__()
         self.graph=pg.PlotWidget()
 
         self.motorname=motornode.text(0)
         self.robotname = robotnode.text(0)
         self.robotnum=robotnode.text(1)
+        self.timeseries=timeseries
         self.data=data
         self.robot=robot
 
@@ -56,17 +57,18 @@ class graphSubWin(QMainWindow):
         #   print(SheetQuary(db, 'motor','where ofRobotNum={}'.format('009')))
      #   datafile = dataFile(r'data.xlsx', '六轴工业机器人', '999')
         if self.motorname=='J1':
-            self.robot.motor1.recordData(list2str(self.data), list2str(self.data))
+            self.robot.motor1.recordData(list2str(self.timeseries),list2str(self.data), list2str(self.data))
         if self.motorname=='J2':
-            self.robot.motor2.recordData(list2str(self.data), list2str(self.data))
+            self.robot.motor2.recordData(list2str(self.timeseries),list2str(self.data), list2str(self.data))
         if self.motorname=='J3':
-            self.robot.motor3.recordData(list2str(self.data), list2str(self.data))
+            self.robot.motor3.recordData(list2str(self.timeseries),list2str(self.data), list2str(self.data))
         if self.motorname=='J4':
-            self.robot.motor4.recordData(list2str(self.data), list2str(self.data))
+            self.robot.motor4.recordData(list2str(self.timeseries),list2str(self.data), list2str(self.data))
         if self.motorname=='J5':
-            self.robot.motor5.recordData(list2str(self.data), list2str(self.data))
+            self.robot.motor5.recordData(list2str(self.timeseries),list2str(self.data), list2str(self.data))
         if self.motorname=='J6':
-            self.robot.motor6.recordData(list2str(self.data), list2str(self.data))
+            self.robot.motor6.recordData(list2str(self.timeseries),list2str(self.data), list2str(self.data))
+
         print("存入成功！")
 
 

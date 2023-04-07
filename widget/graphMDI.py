@@ -38,14 +38,15 @@ class graphMDI(QMdiArea):
         print('*****************************************************')
         print(motor)
         data = self.parent.parent.datafile.getJxAngle(motor)
-        subWin = graphSubWin(self.robot,self.robotnode,self.motornode,data)  # 创建子窗口
+        timeseries=self.parent.parent.datafile.gettimeseries()
+        subWin = graphSubWin(self.robot,self.robotnode,self.motornode,timeseries,data)  # 创建子窗口
 
 
         if 'J' in motor:  # 设置绘图样式
 
 
             pen = pg.mkPen({'color': (155, 200, 160), 'width': 2})  # 画笔设置
-            subWin.graph.plot(data,clear=True, pen=pen)  # 画出从excel中读取到的数据
+            subWin.graph.plot(timeseries,data,clear=True, pen=pen)  # 画出从excel中读取到的数据
 
             datalist=list(data)
 

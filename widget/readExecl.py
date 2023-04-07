@@ -38,6 +38,10 @@ class dataFile(QObject):
         data = self.file[Jx]
         return data
 
+    def gettimeseries(self):
+        timeseries=self.file['时间']
+        return timeseries
+
     def getJ1(self):
         data = self.file["J1"]
         return data
