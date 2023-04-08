@@ -81,9 +81,11 @@ def drawSphere(radius):
 #    mesh.rotate(60,0,0,1)
 
 
-class creatJx:
-    def __init__(self, win, len=6):
-        self.win = win
+class creatJx(GLGraphicsItem):
+    def __init__(self,pos,len=6):
+        super().__init__()
+        self.pos=pos
+        self.nextJx=None
         self.len = len
         self.mesh3 = drawSphere(1)
         self.mesh2 = drawCube([1, 1, self.len])
@@ -91,6 +93,7 @@ class creatJx:
         self.local=[0,0,0]
 
         self.initShape()
+        self.translate(*pos)
 
     def initShape(self):
         self.mesh1.translate(0, 0, self.len / 2)
@@ -98,22 +101,26 @@ class creatJx:
         self.mesh2.translate(0, 0, self.len)
         self.mesh3.translate(0, 0, self.len)
 
-        self.win.addItem(self.mesh1)
-        self.win.addItem(self.mesh2)
-        self.win.addItem(self.mesh3)
+        self.mesh1.setParentItem(self)
+        self.mesh2.setParentItem(self)
+        self.mesh3.setParentItem(self)
 
-    def rotate(self, angle, x, y, z,local=False):
-        self.local=local
-        self.mesh1.rotate(angle, x, y, z,local=self.local)
-        self.mesh2.rotate(angle, x, y, z,local=self.local)
-        self.mesh3.rotate(angle, x, y, z,local=self.local)
+    def link(self,nextJx):
+        self.nextJx = nextJx
+
+        self.nextJx.pos = [self.pos[0],self.pos[1],self.pos[2]+self.len]
 
 
-    def translate(self, x, y, z,local=False):
-        self.local = local
-        self.mesh1.translate(x, y, z,local=self.local)
-        self.mesh2.translate(x, y, z,local=self.local)
-        self.mesh3.translate(x, y, z,local=self.local)
+        pos_nextJx = list(map(lambda x, y: x + y, self.pos, self.nextJx.pos))
+
+        self.nextJx.translate(*pos_nextJx)
+        self.nextJx.setParentItem(self)
+
+
+
+
+
+
 
 
 # 创建GLMeshItem对象，并将其添加到窗口中
@@ -132,16 +139,20 @@ y=GLGraphicsItem()
 
 parent = GLGraphicsItem()
 
-mesh1.setParentItem(parent)
-mesh2.setParentItem(parent)
-mesh3.setParentItem(parent)
+# mesh1.setParentItem(parent)
+# mesh2.setParentItem(parent)
+# mesh3.setParentItem(parent)
 
-win.addItem(parent)
-parent.translate(0, 0, 5)
+# win.addItem(parent)
+# parent.translate(0, 0, 5)
 
-# J1 = creatJx(win)
-# J2 = creatJx(win)
-# J2.translate(0,0,6)
+J1 = creatJx([0,0,0])
+J1.setParentItem(parent)
+J2 = creatJx([0,0,0])
+J1.link(J2)
+print('sJ2:',J2)
+
+
 
 
 
@@ -149,8 +160,10 @@ parent.translate(0, 0, 5)
 def progress():
     while True:
         sleep(0.01)
-        print("thread ")
-        parent.rotate(1, 1, 0, 0,True)
+#        print("thread ")
+        J2.rotate(1, 0, 0, 1,True)
+        J1.rotate(1, 1, 0, 0, True)
+        win.update()
 
 
 t1 = threading.Thread(target=progress)
@@ -159,6 +172,10 @@ t1.start()
 grid = gl.GLGridItem()  # 创建 GLGridItem 对象
 grid.setSize(x=50, y=50)  # 设置网格大小
 win.addItem(grid)
+
+
+win.addItem(parent)
+
 # 进入Qt事件循环
 
 
