@@ -35,9 +35,14 @@ sphere_radius = 1.0
 sphere_sectors = 20
 sphere_stacks = 20
 sphere_vertices, sphere_faces = make_sphere(sphere_radius, sphere_sectors, sphere_stacks)
-bitMd = gl.MeshData.sphere(rows=2, cols=4)
+bitMd = gl.MeshData.sphere(rows=20, cols=20)
 sphere_mesh = gl.GLMeshItem(vertexes=sphere_vertices, faces=sphere_faces,
                             smooth=True, drawEdges=True, color=[0.5, 0.5, 1, 1])
+sphere_mesh = gl.GLMeshItem(meshdata=bitMd,
+                            smooth=True, drawEdges=True, color=[0.5, 0.5, 1, 1])
+translation = np.array([1, 2, 3])  # 设置平移向量
+sphere_mesh.translate(1, 2, 3)
+
 w.addItem(sphere_mesh)
 
 # 设置相机位置和方向
