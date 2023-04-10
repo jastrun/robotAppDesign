@@ -7,9 +7,7 @@ from ThreeDeRobot import *
 from dataFFT import dataFFT
 from dbtableview import dataselect
 from graphMDI import *
-
-
-
+from numpytest import sixMotorRobot3d
 
 
 class TabDemo(QTabWidget):
@@ -50,9 +48,14 @@ class TabDemo(QTabWidget):
         #zhu表单布局，次水平布局
         layout=QHBoxLayout()
 
-        robot3d=sixRobot()
 
-        layout.addWidget(robot3d)
+        _3dwidget=gl.GLViewWidget()
+        robot3d = sixMotorRobot3d(self,_3dwidget)
+        _3dwidget.addItem(robot3d)
+        _3dwidget.opts['distance'] = 40
+        _3dwidget.show()
+
+        layout.addWidget(_3dwidget)
 
         #设置标题与布局
         self.setTabText(1,'3d实时显示')

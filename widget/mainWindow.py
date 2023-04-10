@@ -27,19 +27,46 @@ except pymysql.Error as e:
 
 
 class mainWindow(QMainWindow, Pyqt5_Serial):
-
+    dataunit_abs_signal = pyqtSignal(list)
+    dataunit_rela_signal = pyqtSignal(list)
     def __init__(self):
         super().__init__()
         self.currentSourceLabel=QLabel("未选定")
         self.currentRobotLabel = QLabel("未选定")
         self.filepath = None
-        self.datafile=dataFile()
+        self.datafile=dataFile()  #数据文件
+
+        self.dataunit=[]  # 数据源列表
         self.tab = TabDemo(self)  # 创建tab窗口
         self.dbToolBar = self.addToolBar("db")  # 创建数据库工具栏
         self.robotTree = dbTree(db,self)  # 获取数据库部分的树
         self.robotTree.setMinimumWidth(350)
         self.serialWidget = self.initSerial()  # 获取串口部分设置的窗口
         self.initUI()
+        self.initSlot()
+
+    def initSlot(self):
+        self.datafile.dataunit_signal.connect(self.receiveDataUnit)
+
+    def stopLink(self):
+        if self.currentSourceLabel.text()=='文件':
+            self.datafile.dataunit_signal.disconnect(self.receiveDataUnit)
+        self.stopAct.setDisabled(True)
+        self.linkAct.setDisabled(False)
+
+    def receiveDataUnit(self,datalist1,datalist2):
+        # 数据格式：时间序列，J1，J2，...，J6
+        self.dataunit_abs = []
+        self.dataunit_rela = []
+        for onedata in datalist1:
+            self.dataunit_abs.append(onedata)
+        for onedata in datalist2:
+            self.dataunit_rela.append(onedata)
+
+        self.dataunit_abs_signal.emit(self.dataunit_abs)
+        self.dataunit_rela_signal.emit(self.dataunit_rela)
+        print(self.dataunit)
+        print('**************************\n')
 
     def initUI(self):
         # 主布局窗口
@@ -230,9 +257,14 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
 
 
 
-        self.linkAct=QAction(QIcon(os.getcwd() + "\\..\\image\\链接.png"), '链接', self)
+        self.linkAct=QAction(QIcon(os.getcwd() + "\\..\\image\\开始.png"), '链接', self)
         self.linkInfoTooBar.addAction(self.linkAct)  # 添加动作
         self.linkAct.triggered.connect(self.linkSource)
+
+        self.stopAct = QAction(QIcon(os.getcwd() + "\\..\\image\\暂停.png"), '链接', self)
+        self.stopAct.setDisabled(True)
+        self.linkInfoTooBar.addAction(self.stopAct)  # 添加动作
+        self.stopAct.triggered.connect(self.stopLink)
 
 
 
@@ -318,12 +350,15 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         print(path)
 
     def linkSource(self):
-        if self.currentSourceLabel=='文件':
-            self.linkFile()
+        if self.currentSourceLabel.text()=='文件':
+            self.startFileTrans()
+        self.stopAct.setDisabled(False)
+        self.linkAct.setDisabled(True)
 
-    def linkFile(self):
-        self.datafile
-        self.tab.graphMdi.children()
+
+    def startFileTrans(self):
+        print(2)
+        self.datafile.send_threading.start()
 
 
     def sourceChange(self,source):
