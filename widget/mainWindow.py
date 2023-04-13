@@ -1,3 +1,5 @@
+from PyQt5 import QtCore
+
 from db.dbTree import *
 from serialOp.serialConfig import serialConfig
 from serialOp.serialdemo import *
@@ -7,11 +9,14 @@ import ctypes
 from tabWidget import *
 from graphMDI import *
 from readExecl import *
+from timerSeries import timeseries
+
 
 def readQss(style):
-
     with open(style, 'r') as f:
         return f.read()
+
+
 # 连接数据库
 try:
     db = pymysql.connect(host="localhost",
@@ -29,32 +34,65 @@ except pymysql.Error as e:
 class mainWindow(QMainWindow, Pyqt5_Serial):
     dataunit_abs_signal = pyqtSignal(list)
     dataunit_rela_signal = pyqtSignal(list)
+    dataunit_robotInfo_signal = pyqtSignal(list)
+    time_signal = pyqtSignal(float)
+
     def __init__(self):
         super().__init__()
-        self.currentSourceLabel=QLabel("未选定")
-        self.currentRobotLabel = QLabel("未选定")
-        self.filepath = None
-        self.datafile=dataFile()  #数据文件
+        self.startFlag = False
+        self.timer=timeseries()
 
-        self.dataunit=[]  # 数据源列表
+        self.msg_box = QMessageBox(QMessageBox.Information, '', '', QMessageBox.Cancel,
+                                   parent=self)
+        self.currentSourceLabel = QLabel("未选定")
+        self.currentRobotLabel = QLabel("未选定")
+
+        self.datafile = None
+
+        self.dataunit = []  # 数据源列表
         self.tab = TabDemo(self)  # 创建tab窗口
         self.dbToolBar = self.addToolBar("db")  # 创建数据库工具栏
-        self.robotTree = dbTree(db,self)  # 获取数据库部分的树
+        self.robotTree = dbTree(db, self)  # 获取数据库部分的树
         self.robotTree.setMinimumWidth(350)
         self.serialWidget = self.initSerial()  # 获取串口部分设置的窗口
         self.initUI()
         self.initSlot()
 
     def initSlot(self):
-        self.datafile.dataunit_signal.connect(self.receiveDataUnit)
+        pass
+
+    def clearInfo(self):
+        # 清空标签
+        self.currentSourceLabel.setText("未选定")
+        self.currentRobotLabel.setText("未选定")
+        # 断开数据源的链接 重置文件
+#        self.datafile.dataunit_signal.disconnect(self.receiveDataUnit)
+        self.datafile = None
+        # 重置数据
+        self.dataunit = []  # 数据源列表
+        self.dataunit_abs = []
+        self.dataunit_rela = []
+        # 重置绘图窗口
+        self.tab.graphMdi.subwinlist=[]
+        self.tab.graphMdi.closeAllSubWindows()
+        self.tab.graphMdi.clearData()
+
+        self.timer.end()
+
+
 
     def stopLink(self):
-        if self.currentSourceLabel.text()=='文件':
+        if self.currentSourceLabel.text() == '文件':
             self.datafile.dataunit_signal.disconnect(self.receiveDataUnit)
         self.stopAct.setDisabled(True)
         self.linkAct.setDisabled(False)
+        self.tab.graphMdi.setTabsClosable(True)
+        self.clearAct.setDisabled(False)
+        self.startFlag = False
 
-    def receiveDataUnit(self,datalist1,datalist2):
+        self.timer.stop()
+
+    def receiveDataUnit(self, datalist1, datalist2):
         # 数据格式：时间序列，J1，J2，...，J6
         self.dataunit_abs = []
         self.dataunit_rela = []
@@ -63,10 +101,11 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         for onedata in datalist2:
             self.dataunit_rela.append(onedata)
 
+        self.time_signal.emit(self.timer.getCurTime())
         self.dataunit_abs_signal.emit(self.dataunit_abs)
         self.dataunit_rela_signal.emit(self.dataunit_rela)
-        print(self.dataunit)
-        print('**************************\n')
+
+
 
     def initUI(self):
         # 主布局窗口
@@ -94,7 +133,6 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.addDockWidget(Qt.LeftDockWidgetArea, self.treedock)
         self.robotTree.currentItemChanged.connect(self.robotlabelchange)
 
-
         #  添加绘图区
 
         splitter1.addWidget(self.tab)
@@ -112,9 +150,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         #    self.serialdock = QDockWidget("串口", self)
         #    self.serialdock.setWidget(self.serialWidget)
         #    self.addDockWidget(Qt.BottomDockWidgetArea, self.serialdock)
-        # 设置文件
-        self.datafile.fileinfo_signal.connect(self.acceptFIleInfo)
-        self.datafile.source_signal.connect(self.sourceChange)
+
 
         Vlayout.addWidget(splitter2)
         mainWidget.setLayout(Vlayout)
@@ -166,26 +202,26 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.serialmenu.addAction(self.serial_Check)  # 添加动作
         self.serial_Check.triggered.connect(self.port_check)
 
-        self.serial_Open = QAction(QIcon(os.getcwd() + "\\..\\image\\打开串口.png"),'打开串口', self)
+        self.serial_Open = QAction(QIcon(os.getcwd() + "\\..\\image\\打开串口.png"), '打开串口', self)
         self.serialmenu.addAction(self.serial_Open)  # 添加动作
         self.serial_Open.triggered.connect(self.port_open)
 
-        self.serial_Close = QAction(QIcon(os.getcwd() + "\\..\\image\\连接断开.png"),'关闭串口', self)
+        self.serial_Close = QAction(QIcon(os.getcwd() + "\\..\\image\\连接断开.png"), '关闭串口', self)
         self.serialmenu.addAction(self.serial_Close)  # 添加动作
         self.serial_Close.triggered.connect(self.port_close)
         self.serial_Close.setEnabled(False)
         # 视图窗口
         self.viewmenu = self.menubar.addMenu("视图")
 
-        self.dbTreeView = QAction(QIcon(os.getcwd() + "\\..\\image\\树状图.png"),'机器人树', self)
+        self.dbTreeView = QAction(QIcon(os.getcwd() + "\\..\\image\\树状图.png"), '机器人树', self)
         self.viewmenu.addAction(self.dbTreeView)  # 添加动作
         self.dbTreeView.triggered.connect(self.dbTreeVisable)
 
-        self.serialsendView = QAction(QIcon(os.getcwd() + "\\..\\image\\发送.png"),'串口发送', self)
+        self.serialsendView = QAction(QIcon(os.getcwd() + "\\..\\image\\发送.png"), '串口发送', self)
         self.viewmenu.addAction(self.serialsendView)  # 添加动作
         self.serialsendView.triggered.connect(self.serialsendVisable)
 
-        self.serialreceiveView = QAction(QIcon(os.getcwd() + "\\..\\image\\接收.png"),'串口接收', self)
+        self.serialreceiveView = QAction(QIcon(os.getcwd() + "\\..\\image\\接收.png"), '串口接收', self)
         self.viewmenu.addAction(self.serialreceiveView)  # 添加动作
         self.serialreceiveView.triggered.connect(self.serialreceiveVisable)
 
@@ -194,26 +230,33 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
 
         self.readfileAct = QAction(QIcon(os.getcwd() + "\\..\\image\\读取模板.png"), '文件', self)
         self.filemenu.addAction(self.readfileAct)  # 添加动作
-        self.readfileAct.triggered.connect(self.datafile.openFile)
+        self.readfileAct.triggered.connect(self.OpenFile)
         # 串口
         self.filemenu.addAction(self.serial_Open)  # 添加动作
 
         self.readnetAct = QAction(QIcon(os.getcwd() + "\\..\\image\\Ethernet.png"), '网线', self)
         self.filemenu.addAction(self.readnetAct)  # 添加动作
-        self.readnetAct.triggered.connect(self.datafile.openFile)
+        self.readnetAct.triggered.connect(self.OpenFile)
 
+    def OpenFile(self):
+        self.datafile = dataFile(self)  # 数据文件
+        # 设置文件
+        self.datafile.dataunit_signal.connect(self.receiveDataUnit)
+        self.datafile.fileinfo_signal.connect(self.acceptFIleInfo)
+        self.datafile.source_signal.connect(self.sourceChange)
+        self.datafile.openFile()
 
     def port_open(self):
         super().port_open()
         if self.ser.isOpen():
             self.serial_Open.setEnabled(False)
             self.serial_Close.setEnabled(True)
+
     def port_close(self):
         super().port_close()
         if not self.ser.isOpen():
             self.serial_Open.setEnabled(True)
             self.serial_Close.setEnabled(False)
-
 
     def dbTreeVisable(self):
         self.treedock.show()
@@ -247,7 +290,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.graphToolBar.addWidget(self.s1__box_2)
 
         # 链接信息
-        self.linkInfoTooBar = QToolBar("link",self)
+        self.linkInfoTooBar = QToolBar("link", self)
         self.addToolBar(self.linkInfoTooBar)
         self.linkInfoTooBar.addWidget(QLabel("当前源:"))
         self.linkInfoTooBar.addWidget(self.currentSourceLabel)
@@ -255,9 +298,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.linkInfoTooBar.addWidget(QLabel("当前机器人:"))
         self.linkInfoTooBar.addWidget(self.currentRobotLabel)
 
-
-
-        self.linkAct=QAction(QIcon(os.getcwd() + "\\..\\image\\开始.png"), '链接', self)
+        self.linkAct = QAction(QIcon(os.getcwd() + "\\..\\image\\开始.png"), '链接', self)
         self.linkInfoTooBar.addAction(self.linkAct)  # 添加动作
         self.linkAct.triggered.connect(self.linkSource)
 
@@ -266,7 +307,10 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.linkInfoTooBar.addAction(self.stopAct)  # 添加动作
         self.stopAct.triggered.connect(self.stopLink)
 
-
+        self.clearAct = QAction(QIcon(os.getcwd() + "\\..\\image\\清空.png"), '清空', self)
+        self.linkInfoTooBar.addAction(self.clearAct)  # 添加动作
+        self.clearAct.triggered.connect(self.clearInfo)
+        self.clearAct.setDisabled(True)
 
         # Using a QToolBar object and a toolbar area
         helpToolBar = QToolBar("Help", self)
@@ -326,7 +370,6 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.addDockWidget(Qt.BottomDockWidgetArea, self.serialreceivedock)
         self.serialreceivedock.setWindowTitle("receive")
 
-
         # 设置总布局
         self.serialWidget.setLayout(self.serialLayout)
         return self.serialWidget
@@ -346,26 +389,50 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.s1__box_6.setCurrentText(stopbits)
         self.s1__box_5.setCurrentText(parity)
 
-    def acceptFIleInfo(self,path):
+    def acceptFIleInfo(self, path):
         print(path)
 
     def linkSource(self):
-        if self.currentSourceLabel.text()=='文件':
-            self.startFileTrans()
-        self.stopAct.setDisabled(False)
-        self.linkAct.setDisabled(True)
+        if self.currentSourceLabel.text() == '文件':
+            if not self.datafile.send_threading.isAlive():
+                self.datafile.send_threading.start()
+            else:
+                self.datafile.dataunit_signal.connect(self.receiveDataUnit)
+            #         self.tab.robot3d.initializePos()                            #  回到初始位置
+            #        self.dataunit_rela_signal.emit(self.dataunit_abs)  # 重新定位
+            self.stopAct.setDisabled(False)
+            self.linkAct.setDisabled(True)
+            self.tab.graphMdi.setTabsClosable(False)
+            self.clearAct.setDisabled(True)
+            self.startFlag=True
 
+            # <计时器尚未开始，无法获取当前时间！> 需要修改
+            if self.timer.stopFlag == True:
+                self.timer.reStart()
+            else:
+                self.timer.start()
+
+        if self.currentSourceLabel.text() == '未选定':
+            self.msg_box.setWindowTitle("警告")
+            self.msg_box.setText("还未选定数据源！")
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.show()
+        if self.currentRobotLabel.text() == '未选定':
+            self.msg_box.setWindowTitle("警告")
+            self.msg_box.setText("还未选定机器人！")
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.show()
+
+            self.msg_box.setIcon(QMessageBox.Warning)
 
     def startFileTrans(self):
         print(2)
-        self.datafile.send_threading.start()
 
-
-    def sourceChange(self,source):
+    def sourceChange(self, source):
         self.currentSourceLabel.setText(source)
 
-    def robotlabelchange(self,item):
-        if item.parent().text(0)=='机器人数据库':
-            self.currentRobotLabel.setText(item.text(0)+item.text(1))
+    def robotlabelchange(self, item):
+        if item.parent().text(0) == '机器人数据库':
+            self.currentRobotLabel.setText(item.text(0) + item.text(1))
         else:
-            self.currentRobotLabel.setText(item.parent().text(0)+item.parent().text(1))
+            self.currentRobotLabel.setText(item.parent().text(0) + item.parent().text(1))

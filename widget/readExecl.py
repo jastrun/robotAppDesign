@@ -1,9 +1,11 @@
 # -- coding: utf-8 --
+import os
 import threading
 from time import sleep
 
 import pandas as pd
 from PyQt5.QtCore import pyqtSignal, QObject, QUrl
+from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QFileDialog, QWidget, QMessageBox, QDialog
 
 file_path = r'data.xlsx'
@@ -15,18 +17,21 @@ class dataFile(QObject):
     source_signal = pyqtSignal(str)
     dataunit_signal = pyqtSignal(list,list)
 
-    def __init__(self):
+    def __init__(self,parent):
         super(dataFile,self).__init__()
-
+        self.parent=parent
 
 
     def loadData(self,file_path):
+
         self.file = pd.read_excel(file_path, sheet_name="Sheet1")
 
 
         self.send_threading= threading.Thread(target=self.sendDataUnit)
 #        self.send_threading.start()
         print("file ok!")
+        self.msg_box.setText("加载完成！")
+        self.source_signal.emit("文件")
 
     def sendDataUnit(self):
         timeseries = list(self.gettimeseries())
@@ -41,7 +46,6 @@ class dataFile(QObject):
         print("file ok!")
         i = 0
         while i <= len(timeseries):
-            i = i + 1
             sleep(0.026167)
             if i == 0:
                 a1 = angle_J1[i]
@@ -58,12 +62,12 @@ class dataFile(QObject):
                 a5 = (angle_J5[i] - angle_J5[i - 1])
                 a6 = (angle_J6[i] - angle_J6[i - 1])
 
+
             dataunit1 = [timeseries[i], angle_J1[i], angle_J2[i], angle_J3[i], angle_J4[i], angle_J5[i], angle_J6[i]]
             dataunit2 = [timeseries[i], a1, a2, a3, a4, a5, a6]
             self.dataunit_signal.emit(dataunit1,dataunit2)
-
+            i = i + 1
         print("send  ok!")
-
 
 
     def openFile(self):
@@ -73,13 +77,19 @@ class dataFile(QObject):
 
                                                       "./")  # 起始路径
         directory1=directory1[0].toLocalFile()
-        print(directory1)
-        # 加载本地excel文件
-        # self.loadData(directory1)
+        # 如果路径为空那么就返回 什么也不做
+        if directory1 == '':
+            print("directory1：",directory1)
+            return 0
+
+
         t1 = threading.Thread(target=lambda :self.loadData(directory1))
+        self.msg_box = QMessageBox(QMessageBox.Information, '提示', '文件正在加载中...',parent=self.parent)
+        self.msg_box.setIconPixmap(QPixmap(os.getcwd() + "\\..\\image\\加载中.PNG"))
+        self.msg_box.show()
         t1.start()
         self.fileinfo_signal.emit(directory1)
-        self.source_signal.emit("文件")
+
 
 
 

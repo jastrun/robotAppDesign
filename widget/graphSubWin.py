@@ -9,22 +9,43 @@ import numpy as np
 
 from db.sheetOp import list2str
 
-
-class graphSubWin(QMainWindow):
-    def __init__(self, parent, robot, robotnode, motornode, timeseries, data):
+class disClose(QWidget):
+    def __init__(self):
         super().__init__()
+
+
+        # 最顶端 永远在最前面 无边框（无法拖动）
+        self.setWindowFlags(Qt.WindowMaximizeButtonHint)
+
+class graphSubWin(disClose):
+    def __init__(self, parent, robot, robotnode, motornode):
+        super().__init__()
+
         self.graph = pg.PlotWidget()
+        self.graph.setWindowFlags(Qt.FramelessWindowHint)
         self.plotwid = self.graph.plot()
         self.parent = parent
+        self.data=[]
+        self.timeseries = []
         self.motorname = motornode.text(0)
         self.robotname = robotnode.text(0)
         self.robotnum = robotnode.text(1)
-        self.timeseries = timeseries
-        self.data = data
         self.robot = robot
 
         self.initUI()
         self.initSlot()
+
+        self.setWindowFlags(Qt.WindowMaximizeButtonHint)
+
+    def closeEvent(self, event):
+
+        flag=self.parent.parent.parent.startFlag
+        print(flag)
+        if flag:
+            QMessageBox.warning(self, "注意：", "数据正在接收，无法关闭窗体！", QMessageBox.Cancel)
+            event.ignore()
+        else:
+            event.accept()
 
     def initUI(self):
         self.mainWidget = QWidget()
@@ -38,11 +59,12 @@ class graphSubWin(QMainWindow):
         self.Hlayout.addWidget(self.save2localBtn)
 
         self.layout.addLayout(self.Hlayout)
-        self.initToolBar()
-        self.mainWidget.setLayout(self.layout)
-        self.setCentralWidget(self.mainWidget)
+#        self.initToolBar()
 
-        self.show()
+#        self.mainWidget.setLayout(self.layout)
+#        self.setCentralWidget(self.mainWidget)
+        self.setLayout(self.layout)
+
 
     def initSlot(self):
         self.save2dbBtn.clicked.connect(self.save2db)

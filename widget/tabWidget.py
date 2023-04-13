@@ -37,7 +37,7 @@ class TabDemo(QTabWidget):
         layout=QHBoxLayout()
         # 加载web
         self.webview = QWebEngineView(self)
-        url="D:/莫愁/Documents/pythonproj/robotAPP/html1/index.html"
+        url="D:/莫愁/Documents/pythonproj/robotAPP/html2/index.html"
         self.webview.load(QUrl(url))
         self.webview.setZoomFactor(0.8)
         layout.addWidget(self.webview)
@@ -50,8 +50,8 @@ class TabDemo(QTabWidget):
 
 
         _3dwidget=gl.GLViewWidget()
-        robot3d = sixMotorRobot3d(self,_3dwidget)
-        _3dwidget.addItem(robot3d)
+        self.robot3d = sixMotorRobot3d(self,_3dwidget)
+        _3dwidget.addItem(self.robot3d)
         _3dwidget.opts['distance'] = 40
         _3dwidget.show()
 

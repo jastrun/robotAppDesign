@@ -148,6 +148,13 @@ class sixMotorRobot3d(GLGraphicsItem):
         self.J4.link(self.J5)
         self.J5.link(self.J6)
 
+        self.angle_J1 = 0
+        self.angle_J2 = 0
+        self.angle_J3 = 0
+        self.angle_J4 = 0
+        self.angle_J5 = 0
+        self.angle_J6 = 0
+
         grid = gl.GLGridItem()  # 创建 GLGridItem 对象
         grid.setSize(x=50, y=50)  # 设置网格大小
         grid.setParentItem(self)
@@ -161,7 +168,7 @@ class sixMotorRobot3d(GLGraphicsItem):
         self.linkJx()
 
         # 槽
-        self.parent.parent.dataunit_rela_signal.connect(self.receiveData)
+        self.parent.parent.dataunit_abs_signal.connect(self.receiveData)
 
     def linkJx(self):
         pass
@@ -174,6 +181,14 @@ class sixMotorRobot3d(GLGraphicsItem):
         self.J5.rotate(a5)
         self.J6.rotate(a6)
 
+        self.angle_J1 = self.angle_J1+a1
+        self.angle_J2 = self.angle_J2+a2
+        self.angle_J3 = self.angle_J3+a3
+        self.angle_J4 = self.angle_J4+a4
+        self.angle_J5 = self.angle_J5+a5
+        self.angle_J6 = self.angle_J6+a6
+
+
     def setlen(self, l1, l2, l3, l4, l5, l6):
         self.J1.setLen(l1)
         self.J2.setLen(l2)
@@ -183,6 +198,8 @@ class sixMotorRobot3d(GLGraphicsItem):
         self.J6.setLen(l6)
 
     def receiveData(self,datalist):
+        self.initializePos()  # 回归初始坐标
+        # 转动相对初始坐标的绝对坐标
         self.setRelaAngle(datalist[1],
                           datalist[2],
                           datalist[3],
@@ -190,7 +207,27 @@ class sixMotorRobot3d(GLGraphicsItem):
                           datalist[5],
                           datalist[3]
                           )
+
         self.win.update()
+
+    def initializePos(self):
+        self.setRelaAngle(-self.angle_J1,
+                          -self.angle_J2,
+                          -self.angle_J3,
+                          -self.angle_J4,
+                          -self.angle_J5,
+                          -self.angle_J6
+                          )
+        self.angle_J1 = 0
+        self.angle_J2 = 0
+        self.angle_J3 = 0
+        self.angle_J4 = 0
+        self.angle_J5 = 0
+        self.angle_J6 = 0
+
+
+        self.win.update()
+
 
 
 def progress():
@@ -208,6 +245,9 @@ def progress():
 
         robot.setRelaAngle(a1, a2, a3, a4, a5, a6)
 
+        win.update()
+
+        robot.initializePos()
         win.update()
 
 if __name__=='__main__':
@@ -228,7 +268,7 @@ if __name__=='__main__':
     angle6 = (list(datafile.getJ6()))
     timeseries = (list(datafile.gettimeseries()))
 
-    robot = sixMotorRobot3d()
+    robot = sixMotorRobot3d(None,win)
 
     t1 = threading.Thread(target=progress)
     t1.start()

@@ -115,5 +115,6 @@ option = {
     ],
 };
 
+
 myChart.setOption(option);
 }
