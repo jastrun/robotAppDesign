@@ -1,5 +1,5 @@
 
-function energyDisply(data,ele) {
+function energyDisply1(data,ele) {
 	var myChart = echarts.init(document.getElementById(ele));
 
 var data = 30; //百分比
