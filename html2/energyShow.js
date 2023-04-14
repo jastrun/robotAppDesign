@@ -56,7 +56,7 @@ option = {
     }, {
         name: '中间立体圆',
         type: 'pictorialBar',
-        symbolSize: [300, 45],
+        symbolSize: [0, 45],
         symbolOffset: [0, -20],
         z: 12,
         itemStyle: {

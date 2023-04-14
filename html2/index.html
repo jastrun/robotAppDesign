@@ -36,19 +36,18 @@
         <div class="container">
             <!-- row -->
             <div class="row tm-content-row">
-                <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col">
+                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 tm-block-col">
                     <div class="tm-bg-primary-dark tm-block">
-                        <h2 class="tm-block-title">Performance</h2>
-                        <div id="main1" class="energy"></div>
-                        <script>energyDisply1(30,"main1");</script>
+                        <h2 class="tm-block-title">实时功率图</h2>
+                        <div id="powerg" class="energy"></div>
+                        <script>energyDisply1("powerg");</script>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col">
-                    <div class="tm-bg-primary-dark tm-block tm-block-taller">
-                        <h2 class="tm-block-title">Storage Information</h2>
-                        <div id="pieChartContainer">
-                            <canvas id="pieChart" class="chartjs-render-monitor" width="200" height="200"></canvas>
-                        </div>                        
+                    <div class="col-lg-6 tm-bg-primary-dark tm-block">
+                        <h2 class="tm-block-title">Performance</h2>
+                        <div id="energy" class="energy"></div>
+                        <script >energyDisply(60,'energy');</script>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col">
@@ -56,13 +55,6 @@
                         <h2 class="tm-block-title">Performance</h2>
                         <div id="power" class="energy"></div>
                         <script >energyDisply(60,'power');</script>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col">
-                    <div class="tm-bg-primary-dark tm-block">
-                        <h2 class="tm-block-title">Performance</h2>
-                        <div id="energy" class="energy"></div>
-                        <script >energyDisply(30,'energy');</script>
                     </div>
                 </div>
                 <div class="col-12 tm-block-col">
