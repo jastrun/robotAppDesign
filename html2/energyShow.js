@@ -41,7 +41,7 @@ option = {
     series: [{
         name: '最上层立体圆',
         type: 'pictorialBar',
-        symbolSize: [300, 45],
+        symbolSize: [150, 45],
         symbolOffset: [0, -20],
         z: 12,
         itemStyle: {
@@ -56,7 +56,7 @@ option = {
     }, {
         name: '中间立体圆',
         type: 'pictorialBar',
-        symbolSize: [0, 45],
+        symbolSize: [150, 45],
         symbolOffset: [0, -20],
         z: 12,
         itemStyle: {
@@ -71,7 +71,7 @@ option = {
     }, {
         name: '最底部立体圆',
         type: 'pictorialBar',
-        symbolSize: [300, 45],
+        symbolSize: [150, 45],
         symbolOffset: [0, 20],
         z: 12,
         itemStyle: {
@@ -100,7 +100,7 @@ option = {
         },
 
         silent: true,
-        barWidth: 300,
+        barWidth: 150,
         barGap: '-100%', // Make series be overlap
         data: [data]
     }, {
@@ -114,7 +114,7 @@ option = {
             }
         },
         silent: true,
-        barWidth: 300,
+        barWidth: 150,
         barGap: '-100%', // Make series be overlap
         data: [100 - data]
     }]
