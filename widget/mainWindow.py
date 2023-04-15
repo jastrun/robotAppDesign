@@ -36,6 +36,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
     dataunit_rela_signal = pyqtSignal(list)
     dataunit_robotInfo_signal = pyqtSignal(list)
     time_signal = pyqtSignal(float)
+    PAE_signal = pyqtSignal(float,float)
 
     def __init__(self):
         super().__init__()
@@ -84,6 +85,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
     def stopLink(self):
         if self.currentSourceLabel.text() == '文件':
             self.datafile.dataunit_signal.disconnect(self.receiveDataUnit)
+            self.datafile.powerAndEnergy_signal.disconnect(self.receivePAEUnit)
         self.stopAct.setDisabled(True)
         self.linkAct.setDisabled(False)
         self.tab.graphMdi.setTabsClosable(True)
@@ -244,6 +246,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.datafile.dataunit_signal.connect(self.receiveDataUnit)
         self.datafile.fileinfo_signal.connect(self.acceptFIleInfo)
         self.datafile.source_signal.connect(self.sourceChange)
+        self.datafile.powerAndEnergy_signal.connect(self.receivePAEUnit)
         self.datafile.openFile()
 
     def port_open(self):
@@ -298,11 +301,11 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.linkInfoTooBar.addWidget(QLabel("当前机器人:"))
         self.linkInfoTooBar.addWidget(self.currentRobotLabel)
 
-        self.linkAct = QAction(QIcon(os.getcwd() + "\\..\\image\\开始.png"), '链接', self)
+        self.linkAct = QAction(QIcon(os.getcwd() + "\\..\\image\\开始.png"), '开始', self)
         self.linkInfoTooBar.addAction(self.linkAct)  # 添加动作
         self.linkAct.triggered.connect(self.linkSource)
 
-        self.stopAct = QAction(QIcon(os.getcwd() + "\\..\\image\\暂停.png"), '链接', self)
+        self.stopAct = QAction(QIcon(os.getcwd() + "\\..\\image\\暂停.png"), '暂停', self)
         self.stopAct.setDisabled(True)
         self.linkInfoTooBar.addAction(self.stopAct)  # 添加动作
         self.stopAct.triggered.connect(self.stopLink)
@@ -392,12 +395,20 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
     def acceptFIleInfo(self, path):
         print(path)
 
+    def receivePAEUnit(self,power,energy):
+        self.power_data = power
+        self.energy_data = energy
+
+        self.PAE_signal.emit(self.power_data,self.energy_data)
+
     def linkSource(self):
+        print("self.timer.stopFlag:", self.timer.stopFlag)
         if self.currentSourceLabel.text() == '文件':
             if not self.datafile.send_threading.isAlive():
                 self.datafile.send_threading.start()
             else:
                 self.datafile.dataunit_signal.connect(self.receiveDataUnit)
+                self.datafile.powerAndEnergy_signal.connect(self.receivePAEUnit)
             #         self.tab.robot3d.initializePos()                            #  回到初始位置
             #        self.dataunit_rela_signal.emit(self.dataunit_abs)  # 重新定位
             self.stopAct.setDisabled(False)
@@ -406,6 +417,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
             self.clearAct.setDisabled(True)
             self.startFlag=True
 
+            print("self.timer.stopFlag:",self.timer.stopFlag)
             # <计时器尚未开始，无法获取当前时间！> 需要修改
             if self.timer.stopFlag == True:
                 self.timer.reStart()

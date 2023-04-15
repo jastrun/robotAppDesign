@@ -16,6 +16,7 @@ class dataFile(QObject):
     fileinfo_signal = pyqtSignal(str)
     source_signal = pyqtSignal(str)
     dataunit_signal = pyqtSignal(list,list)
+    powerAndEnergy_signal = pyqtSignal(float,float)
 
     def __init__(self,parent):
         super(dataFile,self).__init__()
@@ -41,6 +42,9 @@ class dataFile(QObject):
         angle_J4 = list(self.getJ4())
         angle_J5 = list(self.getJ5())
         angle_J6 = list(self.getJ6())
+        motorPower = list(self.getPower())
+        motorEnergy = list(self.getEnergy())
+
 
         print(timeseries, angle_J1, angle_J2, angle_J3, angle_J4, angle_J5, angle_J6)
         print("file ok!")
@@ -66,6 +70,8 @@ class dataFile(QObject):
             dataunit1 = [timeseries[i], angle_J1[i], angle_J2[i], angle_J3[i], angle_J4[i], angle_J5[i], angle_J6[i]]
             dataunit2 = [timeseries[i], a1, a2, a3, a4, a5, a6]
             self.dataunit_signal.emit(dataunit1,dataunit2)
+
+            self.powerAndEnergy_signal.emit(motorPower[i], motorEnergy[i])
             i = i + 1
         print("send  ok!")
 
@@ -93,7 +99,13 @@ class dataFile(QObject):
 
 
 
+    def getPower(self):
+        data = self.file['总电机功率']
+        return data
 
+    def getEnergy(self):
+        data = self.file['电机总能量']
+        return data
 
     def getJxAngle(self,Jx):
         data = self.file[Jx]

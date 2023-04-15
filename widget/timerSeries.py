@@ -52,6 +52,7 @@ class timeseries:
     def end(self):
         if self.startFlag == True:
             self.startFlag = False
+            self.stopFlag = False
             self.stopTime = 0
         else:
             print("开始标志为否，不能再次停止！")

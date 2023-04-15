@@ -1,12 +1,11 @@
 
-function energyDisply1(ele) {
-	var myChart = echarts.init(document.getElementById(ele));
+var myChart = echarts.init(document.getElementById('powerg'));
 
 function randomData() {
   value = Math.random() * 5;
   return value;
 }
-let data = [];
+var data = [];
 let timex = [];
 let value = Math.random() * 0.1;
 for (var i = 0; i < 30; i++) {
@@ -182,10 +181,18 @@ option = {
     ...newArr
   ]
 };
+let data1
+
+function setdata1(data){
+  data1=data
+}
+
+
+
 setInterval(function () {
   for (var i = 0; i < 1; i++) {
     data.shift();
-    data.push(randomData());
+    data.push(data1);
   }
   myChart.setOption({
     series: [
@@ -199,4 +206,4 @@ setInterval(function () {
 
 myChart.setOption(option);
 
-}
+

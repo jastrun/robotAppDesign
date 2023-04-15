@@ -31,7 +31,6 @@ class graphMDI(QMdiArea):
     def setCurtime(self,curtime):
         self.curTime=curtime
         self.timeseries.append(self.curTime)
-        print(curtime)
 
     def setRobotInfo(self,item,c):
         print("机器人信息:",item,c,end="\n")
@@ -62,7 +61,6 @@ class graphMDI(QMdiArea):
         self.acceptNewGraph()
 
     def acceptNewGraph(self):
-        print("1:",self.subwinlist)
         subWin = graphSubWin(self,self.robot,self.robotnode,self.motornode)  # 创建子窗口
 
         subWin.graph.setBackground((210, 240, 240))  # 背景色
@@ -71,7 +69,6 @@ class graphMDI(QMdiArea):
         subWin.setWindowTitle(self.robotnode.text(0)+self.robotnode.text(1)+':'+self.motornode.text(0))  # 设置标题
         self.addSubWindow(subWin)  # 将子窗口添加到MDI中
         self.subwinlist.append(subWin)
-        print("2:", self.subwinlist)
         subWin.show()
 
 
@@ -96,7 +93,7 @@ class graphMDI(QMdiArea):
 
   #      self.time
 
-        print(len(self.timeseries),len(self.data_J1))
+
 
         pen = pg.mkPen({'color': (155, 200, 160), 'width': 2})  # 画笔设置
         for subwin in self.subwinlist:

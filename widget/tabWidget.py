@@ -1,4 +1,7 @@
 import sys
+from datetime import time
+from time import sleep
+
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWebEngineWidgets import QWebEngineView
@@ -31,6 +34,30 @@ class TabDemo(QTabWidget):
         self.tab2UI()
         self.tab3UI()
         self.tab4UI()
+
+        self.parent.PAE_signal.connect(self.receivePAE)
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.senddata)
+
+    def senddata(self):
+        self.webview.page().runJavaScript(self.str1_energy)
+        self.webview.page().runJavaScript(self.str2_power)
+        self.webview.update()
+
+
+    def receivePAE(self,power,energy):
+        self.str1_energy="speedisply({:.2f},'speed');".format(energy)
+        self.str2_power = "energyDisply({:.2f},'power');".format(power)
+        self.str3_power = "setdata1({:.2f});".format(power)
+
+
+        self.timer.start(50)
+
+
+
+
+
+
 
     def tab1UI(self):
         # 垂直布局
@@ -79,6 +106,9 @@ class TabDemo(QTabWidget):
         self.datafft=dataFFT()
         layout.addWidget(self.datafft)
         self.tab4.setLayout(layout)
+
+    def receiveWebdatas(self):
+        pass
 
 if __name__ == '__main__':
     app=QApplication(sys.argv)

@@ -2,7 +2,6 @@
 function energyDisply(data,ele) {
 	var myChart = echarts.init(document.getElementById(ele));
 
-var data = 30; //百分比
 option = {
     backgroundColor: 'rgba(255,255,255,0)',
     tooltip: {
@@ -92,11 +91,11 @@ option = {
         },
         label: {
             show: true,
-            position: "top",
+
             distance: 15,
             color: "#FFFE00",
             fontSize:50,
-            formatter:'{c}'+'%'
+            formatter:'{c}'
         },
 
         silent: true,

@@ -24,7 +24,7 @@
     <script src="echarts-liquidfill.js"></script>
     <script src="echarts-gl.js"></script>
     <script src="echarts-gl.min.js"></script>
-    <script src="powerGraph.js"></script>
+
     <script src="energyShow.js"></script>
     <script src="speedShow.js"></script>
 
@@ -41,18 +41,20 @@
                     <div class="tm-bg-primary-dark tm-block">
                         <h2 class="tm-block-title">实时功率图</h2>
                         <div id="powerg" class="energy"></div>
-                        <script>energyDisply1("powerg");</script>
+                        <script src="powerGraph.js"></script>
+
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col">
                     <div class="col-lg-12 tm-bg-primary-dark tm-block">
-                        <h2 class="tm-block-title">实时速度</h2>
+                        <h2 class="tm-block-title">实时能量</h2>
                         <div id="speed" class="energy"></div>
+                        <script>speedisply(30,'speed');</script>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col">
                     <div class="tm-bg-primary-dark tm-block">
-                        <h2 class="tm-block-title">剩余电量(油量)</h2>
+                        <h2 class="tm-block-title">实时功率</h2>
                         <div id="power" class="energy"></div>
                         <script >energyDisply(60,'power');</script>
                     </div>
@@ -69,6 +71,7 @@
                 </p>
             </div>
         </footer>
+        <script>speedisply(30,'speed');</script>
 
 
     <script src="js/jquery-3.3.1.min.js"></script>
@@ -80,31 +83,7 @@
     <script src="js/bootstrap.min.js"></script>
     <!-- https://getbootstrap.com/ -->
     <script src="js/tooplate-scripts.js"></script>
-    <script>
-        Chart.defaults.global.defaultFontColor = 'white';
-        let ctxLine,
-            ctxBar,
-            ctxPie,
-            optionsLine,
-            optionsBar,
-            optionsPie,
-            configLine,
-            configBar,
-            configPie,
-            lineChart;
-        barChart, pieChart;
-        // DOM is ready
-        $(function () {
-            drawLineChart(); // Line Chart
-            drawBarChart(); // Bar Chart
-            drawPieChart(); // Pie Chart
 
-            $(window).resize(function () {
-                updateLineChart();
-                updateBarChart();                
-            });
-        })
-    </script>
 </body>
 
 </html>
