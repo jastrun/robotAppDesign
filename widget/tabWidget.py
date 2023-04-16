@@ -35,23 +35,25 @@ class TabDemo(QTabWidget):
         self.tab3UI()
         self.tab4UI()
 
-        self.parent.PAE_signal.connect(self.receivePAE)
+        self.parent.PAEAS_signal.connect(self.receivePAEAS)
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.senddata)
 
+
     def senddata(self):
-        self.webview.page().runJavaScript(self.str1_energy)
-        self.webview.page().runJavaScript(self.str2_power)
-        self.webview.update()
+
+        self.webview.page().runJavaScript(self.str3_power)
+        self.webview.page().runJavaScript(self.str0)
+        self.update()
 
 
-    def receivePAE(self,power,energy):
-        self.str1_energy="speedisply({:.2f},'speed');".format(energy)
-        self.str2_power = "energyDisply({:.2f},'power');".format(power)
-        self.str3_power = "setdata1({:.2f});".format(power)
+    def receivePAEAS(self,power,energy,speed):
+        self.str_power = "setdata_power({:.2f});".format(power)
+        self.str_powerg = "setdata_powerg({:.2f});".format(power)
+        self.webview.page().runJavaScript(self.str_power)
+        self.webview.page().runJavaScript(self.str_powerg)
 
 
-        self.timer.start(50)
 
 
 
@@ -61,15 +63,15 @@ class TabDemo(QTabWidget):
 
     def tab1UI(self):
         # 垂直布局
-        layout=QHBoxLayout()
+        self.layoutweb=QHBoxLayout()
         # 加载web
         self.webview = QWebEngineView(self)
         url="D:/莫愁/Documents/pythonproj/robotAPP/html2/index.html"
         self.webview.load(QUrl(url))
         self.webview.setZoomFactor(0.8)
-        layout.addWidget(self.webview)
+        self.layoutweb.addWidget(self.webview)
         self.setTabText(0,'静态信息')
-        self.tab1.setLayout(layout)
+        self.tab1.setLayout(self.layoutweb)
 
     def tab2UI(self):
         #zhu表单布局，次水平布局

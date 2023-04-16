@@ -1,8 +1,8 @@
 
-var myChart = echarts.init(document.getElementById('powerg'));
+var myChart_powerg = echarts.init(document.getElementById('powerg'));
 
 function randomData() {
-  value = Math.random() * 5;
+  value = Math.random() * 250;
   return value;
 }
 var data = [];
@@ -13,8 +13,8 @@ for (var i = 0; i < 30; i++) {
   timex.push(i);
 }
 let colorArr = ['#0000FF', '#00FF00', '#FFF100', '#E60012', '#FF00FF'];
-let textArr = ['Ⅰ类', 'Ⅱ类', 'Ⅲ类', 'Ⅳ类', 'Ⅴ类'];
-let valuetArr = [1, 2, 3, 4, 5];
+let textArr = ['低', '中低', '中', '中高', '高'];
+let valuetArr = [30, 60, 90, 120, 150];
 let jczArr = [1, 1.3, 1.3, 4, 2, 1.4, 3];
 let newArr = [];
 function dealLine(num) {
@@ -54,7 +54,7 @@ for (var i = 0; i < 10; i++) {
     });
   }
 }
-option = {
+option_powerg = {
   backgroundColor: '#11283a',
   tooltip: {
     trigger: 'axis'
@@ -106,7 +106,7 @@ option = {
     {
       type: 'value',
       // max:20,
-      name: '单位：m/s',
+      name: '单位：Kw',
       nameTextStyle: {
         color: '#fff',
         fontSize: 12
@@ -181,10 +181,10 @@ option = {
     ...newArr
   ]
 };
-let data1
+let data_powerg
 
-function setdata1(data){
-  data1=data
+function setdata_powerg(data){
+  data_powerg=data
 }
 
 
@@ -192,9 +192,9 @@ function setdata1(data){
 setInterval(function () {
   for (var i = 0; i < 1; i++) {
     data.shift();
-    data.push(data1);
+    data.push(data_powerg);
   }
-  myChart.setOption({
+  myChart_powerg.setOption({
     series: [
       {
         data: data
@@ -204,6 +204,6 @@ setInterval(function () {
 }, 1000);
 
 
-myChart.setOption(option);
+myChart_powerg.setOption(option_powerg);
 
 

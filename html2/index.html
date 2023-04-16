@@ -26,7 +26,6 @@
     <script src="echarts-gl.min.js"></script>
 
     <script src="energyShow.js"></script>
-    <script src="speedShow.js"></script>
 
 
 
@@ -47,16 +46,26 @@
                 </div>
                 <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col">
                     <div class="col-lg-12 tm-bg-primary-dark tm-block">
-                        <h2 class="tm-block-title">实时能量</h2>
-                        <div id="speed" class="energy"></div>
-                        <script>speedisply(30,'speed');</script>
+                        <h2 class="tm-block-title">实时功率</h2>
+                        <div id="power" class="energy"></div>
+                        <script src="powerShow.js"></script>
+                        <script>setdata_power(0);</script>
+
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col">
                     <div class="tm-bg-primary-dark tm-block">
                         <h2 class="tm-block-title">实时功率</h2>
-                        <div id="power" class="energy"></div>
-                        <script >energyDisply(60,'power');</script>
+                        <div id="energy" class="energy"></div>
+                        <script >energyDisply(60,'energy');</script>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 tm-block-col">
+                    <div class="tm-bg-primary-dark tm-block">
+                        <h2 class="tm-block-title">实时功率图</h2>
+                        <div id="alldata" class="energy"></div>
+                        <script src="allDataTree.js"></script>
+
                     </div>
                 </div>
             </div>
@@ -71,7 +80,6 @@
                 </p>
             </div>
         </footer>
-        <script>speedisply(30,'speed');</script>
 
 
     <script src="js/jquery-3.3.1.min.js"></script>
