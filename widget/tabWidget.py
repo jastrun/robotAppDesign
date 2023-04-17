@@ -48,10 +48,15 @@ class TabDemo(QTabWidget):
 
 
     def receivePAEAS(self,power,energy,speed):
+        list1=[5,1,2,3,1,1,5,6,9]
         self.str_power = "setdata_power({:.2f});".format(power)
         self.str_powerg = "setdata_powerg({:.2f});".format(power)
+        self.str_alldata = "setalldata({});".format(list1)
+        print(self.str_alldata )
+
         self.webview.page().runJavaScript(self.str_power)
         self.webview.page().runJavaScript(self.str_powerg)
+        self.webview.page().runJavaScript(self.str_alldata)
 
 
 

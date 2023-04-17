@@ -32,7 +32,9 @@
 </head>
 
 <body id="reportsPage">
-
+        <canvas></canvas>
+<!-- partial -->
+     <script  src="./script.js"></script>
         <div class="container">
             <!-- row -->
             <div class="row tm-content-row">
@@ -57,14 +59,14 @@
                     <div class="tm-bg-primary-dark tm-block">
                         <h2 class="tm-block-title">实时功率</h2>
                         <div id="energy" class="energy"></div>
-                        <script >energyDisply(60,'energy');</script>
+                        <script >energyDisply(100,'energy');</script>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 tm-block-col">
                     <div class="tm-bg-primary-dark tm-block">
-                        <h2 class="tm-block-title">实时功率图</h2>
-                        <div id="alldata" class="energy"></div>
+                        <div id="alldata" class="alldata"></div>
                         <script src="allDataTree.js"></script>
+
 
                     </div>
                 </div>

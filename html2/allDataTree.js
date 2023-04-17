@@ -184,7 +184,7 @@ function linesConfig(arr) {
 oneArr = group(oneArr, 0);
 erArr = group(erArr, 40);
 
-allArr = [...oneArr, ...erArr];
+
 // 线坐标和配置
 dataArr = linesConfig(allArr);
 
@@ -232,7 +232,7 @@ if (height < 1000) {
 }
 function getOption(startAngle, radius, startAngle2) {
   let option = {
-    backgroundColor: "rgba(0,0,0,1)",
+    backgroundColor: "rgba(0,0,0,0.17)",
     tooltip: {
       formatter: function (param) {
         var str = param.name + " : " + param.data.times + "次";
@@ -242,7 +242,7 @@ function getOption(startAngle, radius, startAngle2) {
       textStyle: {
         fontSize: 20,
       },
-      backgroundColor: "rgba(0,0,0,0.7)",
+      backgroundColor: "rgba(0,0,0,0)",
       textStyle: {
         color: "#ffffff",
       },
@@ -280,6 +280,7 @@ function getOption(startAngle, radius, startAngle2) {
         name: "节点",
         type: "graph",
         silent: false,
+
         hoverAnimation: false, // 鼠标悬浮高亮
         cursor: "default",
         coordinateSystem: "cartesian2d",
@@ -398,8 +399,26 @@ function draw() {
       isBig = true;
     }
   }
-  let option = getOption(startAngle, radius, startAngle2);
-  myChart.setOption(option, true);
+  var option = getOption(startAngle, radius, startAngle2);
+
+  return option
 }
 
-timer = setInterval(draw, 200);
+function randomData() {
+  value = Math.random() * 250;
+  return value;
+}
+
+timer = setInterval(function () {
+
+  option_alldata = draw();
+  console.log(option_alldata.series[0].data[0].name);
+  option_alldata.series[0].animation=false;  //取消动画
+  option_alldata.series[0].data[2].name='机器人'+randomData();
+
+  myChart.setOption(option_alldata, true);
+    }
+    , 1000);
+
+
+
