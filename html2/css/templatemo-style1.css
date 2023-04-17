@@ -375,7 +375,7 @@ thead {
   color: #a0c0de;
 }
 .tm-bg-primary-dark {
-  background-color: #435c70;
+  background-color: rgba(67, 92, 112, 0.19);
 }
 
 .tm-bg-gray {
