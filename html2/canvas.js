@@ -87,7 +87,7 @@ function main(){
 		function animate() {
 		//ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 		ctx.globalCompositeOperation = "source-over";
-		ctx.fillStyle = "rgba(0,0,0,.1)";
+		ctx.fillStyle = "rgb(67,92,112)";
 		ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 		ctx.globalCompositeOperation = "lighter";
 		shapes = [];

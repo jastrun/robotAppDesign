@@ -19,28 +19,28 @@
 	https://templatemo.com/tm-524-product-admin
 	-->
      <link rel="stylesheet" type="text/css" href="css/mystyle.css">
+    <link rel="stylesheet" href="../html2/style.css">
 
     <script src="echarts.js"></script>
     <script src="echarts-liquidfill.js"></script>
     <script src="echarts-gl.js"></script>
     <script src="echarts-gl.min.js"></script>
 
-    <script src="energyShow.js"></script>
 
 
 
 </head>
 
 <body id="reportsPage">
-<canvas id='d1' style="border:dashed 2px #ccc;position:absolute;z-index:-2;filter: alpha(opacity:50);opacity: 0.5"></canvas>
-<!-- partial -->
-     <script src='dist/gsap.min.js'></script>
-    <script src='dist/three.min.js'></script><script  src="./script.js"></script>
+<canvas id="canvas" style="position: absolute;opacity: 0.6;z-index: -1;background-color: #435c70;"></canvas>
+
+	<script type="text/javascript" src="./jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="./canvas.js"></script>
         <div class="container">
             <!-- row -->
-            <div class="row tm-content-row">
-                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 tm-block-col">
-                    <div class="tm-bg-primary-dark tm-block">
+            <div class="row tm-content-row" >
+                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 tm-block-col" >
+                    <div class="tm-bg-primary-dark tm-block" >
                         <h2 class="tm-block-title">实时功率图</h2>
                         <div id="powerg" class="energy"></div>
                         <script src="powerGraph.js"></script>
@@ -59,8 +59,12 @@
                 <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col">
                     <div class="tm-bg-primary-dark tm-block">
                         <h2 class="tm-block-title">实时功率</h2>
-                        <div id="energy" class="energy"></div>
-                        <script >energyDisply(100,'energy');</script>
+
+
+                        <div class="totalEnergy">
+                            <h2 class="totalEnergy">实时功率</h2>
+                        </div>
+
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 tm-block-col">

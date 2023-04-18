@@ -1,126 +1,191 @@
+var myChart_energy = echarts.init(document.getElementById('energy'));
 
-function energyDisply(data,ele) {
-	var myChart = echarts.init(document.getElementById(ele));
-
+let value_energy = 8000;
+let title = 'vision';
+let int = value_energy.toFixed(2).split('.')[0];
+let float = value_energy.toFixed(2).split('.')[1];
 option = {
-    backgroundColor: 'rgba(255,255,255,0)',
-    tooltip: {
-        trigger: 'none'
-    },
-
-    xAxis: {
-        data: ["百分比"],
-        axisTick: {
-            show: false
-        },
-        axisLine: {
-            show: false
-        },
-        axisLabel: {
-            show: false,
-            textStyle: {
-                color: '#e54035'
+    backgroundColor: '#020f18',
+    title: {
+        text: '{a|' + int + '}{b|.' + float + '}\n{c|' + title + '}',
+        x: 'center',
+        y: 'center',
+        textStyle: {
+            rich: {
+                a: {
+                    fontSize: 48,
+                    color: '#fff',
+                    fontWeight:'600',
+                },
+                b: {
+                    fontSize: 20,
+                    color: '#fff',
+                    padding: [0, 0, 14, 0]
+                },
+                c: {
+                    fontSize: 20,
+                    color: '#fff',
+                    padding: [5, 0]
+                }
             }
         }
     },
-    yAxis: {
-        splitLine: {
-            show: false
-        },
-        axisTick: {
-            show: false
-        },
-        axisLine: {
-            show: false
-        },
-        axisLabel: {
-            show: false
-        }
-    },
-    series: [{
-        name: '最上层立体圆',
-        type: 'pictorialBar',
-        symbolSize: [150, 45],
-        symbolOffset: [0, -20],
-        z: 12,
-        itemStyle: {
-            normal: {
-                color: '#363F5E'
+    series: [
+        {
+            type: 'gauge',
+            radius: '60%',
+            clockwise: false,
+            startAngle: '90',
+            endAngle: '-269.9999',
+            splitNumber: 30,
+            detail: {
+                offsetCenter: [0, -20],
+                formatter: ' '
+            },
+            pointer: {
+                show: false
+            },
+            axisLine: {
+                show: true,
+                lineStyle: {
+                    color: [
+                        [0, '#2CFAFC'],
+                        [36.7 / 100, '#0ff'],
+                        [1, '#0f232e']
+                    ],
+                    width: 20
+                }
+            },
+            axisTick: {
+                show: false
+            },
+            splitLine: {
+                show: true,
+                length: 100,
+                lineStyle: {
+                    shadowBlur: 10,
+                    shadowColor: 'rgba(0, 255, 255, 1)',
+                    shadowOffsetY:'0',
+                    color: '#020f18',
+                    width: 2
+                }
+            },
+            axisLabel: {
+                show: false
             }
         },
-        data: [{
-            value: 100,
-            symbolPosition: 'end'
-        }]
-    }, {
-        name: '中间立体圆',
-        type: 'pictorialBar',
-        symbolSize: [150, 45],
-        symbolOffset: [0, -20],
-        z: 12,
-        itemStyle: {
-            normal: {
-                color: '#2B5B4D'
-            }
-        },
-        data: [{
-            value: data,
-            symbolPosition: 'end'
-        }]
-    }, {
-        name: '最底部立体圆',
-        type: 'pictorialBar',
-        symbolSize: [150, 45],
-        symbolOffset: [0, 20],
-        z: 12,
-        itemStyle: {
-            normal: {
-                color: '#01CC04'
-            }
-        },
-        data: [101 - data]
-    }, {
-        //底部立体柱
-        stack: '1',
-        type: 'bar',
-        itemStyle: {
-            normal: {
-                color: '#01CC04',
-                opacity: .7
-            }
-        },
-        label: {
-            show: true,
-
-            distance: 15,
-            color: "#FFFE00",
-            fontSize:50,
-            formatter:'{c}'
+        {
+            type: 'pie',
+            radius: ['44%', '45%'],
+            hoverAnimation: false,
+            clockWise: false,
+            itemStyle: {
+                normal: {
+                    color: '#0C355E'
+                }
+            },
+            label: {
+                show: false
+            },
+            data: _dashed()
         },
 
-        silent: true,
-        barWidth: 150,
-        barGap: '-100%', // Make series be overlap
-        data: [data]
-    }, {
-        //上部立体柱
-        stack: '1',
-        type: 'bar',
-        itemStyle: {
-            normal: {
-                color: '#36405E',
-                opacity: .7
-            }
+        {
+            type: 'pie',
+            radius: [0, '30%'],
+            hoverAnimation: false,
+            clockWise: false,
+            itemStyle: {
+                normal: {
+                    shadowBlur: 20,
+                    shadowColor: '#000',
+                    color: new echarts.graphic.RadialGradient(0.4, 0.3, 1, [{
+                        offset: 0,
+                        color: '#0FF',
+                    }, {
+                        offset: 1,
+                        color: '#060f20'
+                    }])
+                }
+            },
+            label: {
+                show: false
+            },
+            data: [100]
         },
-        silent: true,
-        barWidth: 150,
-        barGap: '-100%', // Make series be overlap
-        data: [100 - data]
-    }]
-
+        {
+            type: 'pie',
+            radius: ['64%', '65.5%'],
+            hoverAnimation: false,
+            clockWise: false,
+            itemStyle: {
+                normal: {
+                    shadowBlur: 20,
+                    shadowColor: 'rgba(0, 255, 255,.3)',
+                    color: '#0f232e'
+                }
+            },
+            label: {
+                show: false
+            },
+            data: [100]
+        },
+        {
+            type: 'pie',
+            radius: ['68%', '69.5%'],
+            hoverAnimation: false,
+            clockWise: false,
+            itemStyle: {
+                normal: {
+                    shadowBlur: 20,
+                    shadowColor: 'rgba(0, 255, 255,.3)',
+                    color: 'rgba(15, 35, 46,.6)',
+                }
+            },
+            label: {
+                show: false
+            },
+            data: [100]
+        },
+    ]
 };
 
+function _dashed() {
+    let dataArr = [];
+    for (var i = 0; i < 100; i++) {
+        if (i % 2 === 0) {
+            dataArr.push({
+                name: (i + 1).toString(),
+                value: 20,
+                itemStyle: {
+                    normal: {
+                        color: 'rgb(0,255,255,.3)',
+                    }
+                }
+            })
+        } else {
+            dataArr.push({
+                name: (i + 1).toString(),
+                value: 20,
+                itemStyle: {
+                    normal: {
+                        color: 'rgb(0,0,0,0)',
+                        borderWidth: 1,
+                        borderColor: "rgba(0,255,255,1)"
+                    }
+                }
+            })
+        }
 
-myChart.setOption(option);
+    }
+    return dataArr
 
 }
+
+
+
+
+
+
+
+myChart_energy.setOption(option)

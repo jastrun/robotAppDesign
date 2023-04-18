@@ -232,7 +232,7 @@ if (height < 1000) {
 }
 function getOption(startAngle, radius, startAngle2) {
   let option = {
-    backgroundColor: "rgba(0,0,0,0.17)",
+    backgroundColor: "rgba(0,0,0,0)",
     tooltip: {
       formatter: function (param) {
         var str = param.name + " : " + param.data.times + "次";
