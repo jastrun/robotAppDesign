@@ -80,8 +80,8 @@ option_powerg = {
   grid: {
     top: '15%',
     left: '10%',
-    right: '5%',
-    bottom: '15%'
+    right: '10%',
+    bottom: '15%',
   },
   xAxis: [
     {
@@ -207,3 +207,6 @@ setInterval(function () {
 myChart_powerg.setOption(option_powerg);
 
 
+window.addEventListener('resize', function() {
+    myChart_powerg.resize();
+  });

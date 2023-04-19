@@ -32,7 +32,7 @@ class dataselect(QWidget):
         self.readdataBtn=QPushButton("加载数据")
         self.okBtn=QPushButton("确认选择")
         self.cancelBtn=QPushButton("取消选择")
-        self.btnlayout.addWidget(self.readdataBtn)
+#        self.btnlayout.addWidget(self.readdataBtn)
         self.btnlayout.addWidget(self.okBtn)
         self.btnlayout.addWidget(self.cancelBtn)
 

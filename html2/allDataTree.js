@@ -1,5 +1,5 @@
 
-var myChart = echarts.init(document.getElementById('alldata'));
+var myChart_alldata = echarts.init(document.getElementById('alldata'));
 var uploadedDataURL = "data-1641348469450-lnHzw8_eG.png";
 
 var uploadedDataURL1 = "data-1641347891384-dznNRXRza.png";
@@ -409,16 +409,32 @@ function randomData() {
   return value;
 }
 
+var arr_alldata=[0,0,2,3,4,5,6,7,8,9];
+var dataname = ['轴1:','轴2:','轴3:','轴4:','轴5:','轴6:','x坐标:','y坐标:','z坐标:']
 timer = setInterval(function () {
 
   option_alldata = draw();
   console.log(option_alldata.series[0].data[0].name);
   option_alldata.series[0].animation=false;  //取消动画
-  option_alldata.series[0].data[2].name='机器人'+randomData();
+  for (i=0;i<9;i++)
+  {
+    option_alldata.series[0].data[i+1].name=dataname[i]+arr_alldata[i];
+  }
 
-  myChart.setOption(option_alldata, true);
+
+  myChart_alldata.setOption(option_alldata, true);
     }
     , 1000);
+
+function setdata__all(data) {
+arr_alldata=[...data]
+}
+setdata__all([0,0,0,0,0,0,0,0,0])
+
+window.addEventListener('resize', function() {
+    myChart_alldata.resize();
+  });
+
 
 
 

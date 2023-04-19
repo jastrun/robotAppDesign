@@ -429,3 +429,6 @@ setInterval(function () {
     option_power.series[3].data[0].value=data_power
     myChart_power.setOption(option_power);
 }, 1000);
+window.addEventListener('resize', function() {
+    myChart_power.resize();
+  });

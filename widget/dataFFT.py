@@ -56,6 +56,23 @@ class dataFFT(QtWidgets.QWidget):
         self.ax.set_xlim([-1, 500])
         self.ax.set_ylim([-1, 500])
 
+        # 获取傅里叶变换的绘图的绘制
+        self.f1 = plt.figure()
+        self.a1 = self.f1.add_axes([0.1, 0.1, 0.8, 0.8])
+        self.f2 = plt.figure()
+        self.a2 = self.f2.add_axes([0.1, 0.1, 0.8, 0.8])
+        self.cavans1 = FigureCanvas(self.f1)
+        self.cavans2 = FigureCanvas(self.f2)
+        layout = QVBoxLayout()
+        figtoolbar = NavigationToolbar(self.cavans1, self)
+        layout.addWidget(figtoolbar)
+        layout.addWidget(self.cavans1)
+        figtoolbar = NavigationToolbar(self.cavans2, self)
+        layout.addWidget(figtoolbar)
+        layout.addWidget(self.cavans2)
+        self.fftwidget.setLayout(layout)
+
+
         self.cavans = FigureCanvas(self.fig)
         self.figtoolbar = NavigationToolbar(self.cavans, self)
 
@@ -67,7 +84,7 @@ class dataFFT(QtWidgets.QWidget):
         self.readDatalocal_db = QPushButton("从本地读取数据")
         self.FFT = QPushButton("傅里叶变换")
         self.btnlayout.addWidget(self.readDataBtn_db)
-        self.btnlayout.addWidget(self.readDatalocal_db)
+#        self.btnlayout.addWidget(self.readDatalocal_db)
         self.btnlayout.addWidget(self.FFT)
 
         self.centrallayout.addLayout(self.btnlayout)
@@ -86,12 +103,13 @@ class dataFFT(QtWidgets.QWidget):
             self.timeserieslist.append(float(i))
 
 
-
+        self.ax.cla()
         self.ax.set_xlim([-1, max(self.timeserieslist)])
         self.ax.set_ylim([min(self.datalist), max(self.datalist)])
         self.ax.plot(self.timeserieslist,self.datalist)
         # 更新画布中的数据
-        plt.draw()
+
+        self.cavans.draw()
         self.cavans.flush_events()
 
 
@@ -111,34 +129,35 @@ class dataFFT(QtWidgets.QWidget):
     def fftConvert(self):
 
         self.datalist_fft=fft(self.datalist)
-
         abs_y = np.abs(self.datalist_fft)  # 取复数的绝对值，即复数的模(双边频谱)
         angle_y = np.angle(self.datalist_fft)  # 取复数的角度
 
-        self.f1=plt.figure()
-        self.a1 = self.f1.add_axes([0.1, 0.1, 0.8, 0.8])
+        self.a1.cla()
         self.a1.plot( abs_y)
         self.a1.set_title("双边振幅谱（未归一化）")
 
-
-        self.f2=plt.figure()
-        self.a2 = self.f2.add_axes([0.1, 0.1, 0.8, 0.8])
+        self.a2.cla()
         self.a2.plot( angle_y)
         self.a2.set_title("双边相位谱（未归一化）")
 
-        self.cavans1 = FigureCanvas(self.f1)
-        self.cavans2 = FigureCanvas(self.f2)
 
+        self.cavans1.draw()
+        self.cavans1.flush_events()
 
-        layout=QVBoxLayout()
-        figtoolbar = NavigationToolbar(self.cavans1, self)
-        layout.addWidget(figtoolbar)
-        layout.addWidget(self.cavans1)
-        figtoolbar = NavigationToolbar(self.cavans2, self)
-        layout.addWidget(figtoolbar)
-        layout.addWidget(self.cavans2)
-        self.fftwidget.setLayout(layout)
+        self.cavans2.draw()
+        self.cavans2.flush_events()
+
         self.fftwidget.show()
+
+
+
+
+        # 更新画布中的数据
+        self.cavans1.draw()
+        self.cavans1.flush_events()
+
+        self.cavans2.draw()
+        self.cavans2.flush_events()
 
 
 if __name__ == '__main__':

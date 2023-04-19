@@ -17,18 +17,7 @@ def readQss(style):
         return f.read()
 
 
-# 连接数据库
-try:
-    db = pymysql.connect(host="localhost",
-                         user="root",
-                         password="aoteman000",
-                         database="robotinfo",
-                         charset="utf8"
-                         )
-    print("数据库连接成功")
-except pymysql.Error as e:
-    print("数据库连接失败：" + str(e))
-    cur = db.cursor()
+
 
 
 class mainWindow(QMainWindow, Pyqt5_Serial):
@@ -37,6 +26,8 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
     dataunit_robotInfo_signal = pyqtSignal(list)
     time_signal = pyqtSignal(float)
     PAEAS_signal = pyqtSignal(float,float,float)
+    alldata_signal = pyqtSignal(list)
+
 
     def __init__(self):
         super().__init__()
@@ -77,6 +68,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.tab.graphMdi.subwinlist=[]
         self.tab.graphMdi.closeAllSubWindows()
         self.tab.graphMdi.clearData()
+        self.tab.clearall()
 
         self.timer.end()
 
@@ -86,6 +78,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         if self.currentSourceLabel.text() == '文件':
             self.datafile.dataunit_signal.disconnect(self.receiveDataUnit)
             self.datafile.powerAndEnergyAndspeed_signal.disconnect(self.receivePAEASUnit)
+            self.datafile.alldata_signal.disconnect(self.receiveAllData)
         self.stopAct.setDisabled(True)
         self.linkAct.setDisabled(False)
         self.tab.graphMdi.setTabsClosable(True)
@@ -93,6 +86,12 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.startFlag = False
 
         self.timer.stop()
+
+
+    def receiveAllData(self,list1):
+        list1 = [float("%.2f" % ele) for ele in list1]
+        self.alldata_signal.emit(list1)
+
 
     def receiveDataUnit(self, datalist1, datalist2):
         # 数据格式：时间序列，J1，J2，...，J6
@@ -160,7 +159,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.setCentralWidget(mainWidget)
         # 设置大小
         self.resize(1200, 900)
-        self.show()
+#        self.show()
 
     def initMenuBar(self):
         self.menubar = self.menuBar()
@@ -243,6 +242,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
     def OpenFile(self):
         self.datafile = dataFile(self)  # 数据文件
         # 设置文件
+        self.datafile.alldata_signal.connect(self.receiveAllData)
         self.datafile.dataunit_signal.connect(self.receiveDataUnit)
         self.datafile.fileinfo_signal.connect(self.acceptFIleInfo)
         self.datafile.source_signal.connect(self.sourceChange)
@@ -404,12 +404,14 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
 
     def linkSource(self):
         print("self.timer.stopFlag:", self.timer.stopFlag)
+
         if self.currentSourceLabel.text() == '文件':
             if not self.datafile.send_threading.isAlive():
                 self.datafile.send_threading.start()
             else:
                 self.datafile.dataunit_signal.connect(self.receiveDataUnit)
                 self.datafile.powerAndEnergyAndspeed_signal.connect(self.receivePAEASUnit)
+                self.datafile.alldata_signal.connect(self.receiveAllData)
             #         self.tab.robot3d.initializePos()                            #  回到初始位置
             #        self.dataunit_rela_signal.emit(self.dataunit_abs)  # 重新定位
             self.stopAct.setDisabled(False)

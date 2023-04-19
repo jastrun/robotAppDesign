@@ -36,34 +36,33 @@ class TabDemo(QTabWidget):
         self.tab4UI()
 
         self.parent.PAEAS_signal.connect(self.receivePAEAS)
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.senddata)
+        self.parent.alldata_signal.connect(self.receiveAllData)
 
 
-    def senddata(self):
 
-        self.webview.page().runJavaScript(self.str3_power)
-        self.webview.page().runJavaScript(self.str0)
-        self.update()
-
+    def receiveAllData(self,alldata):
+        self.str_alldata = "setdata__all({});".format(alldata)
+        self.webview.page().runJavaScript(self.str_alldata)
 
     def receivePAEAS(self,power,energy,speed):
-        list1=[5,1,2,3,1,1,5,6,9]
         self.str_power = "setdata_power({:.2f});".format(power)
         self.str_powerg = "setdata_powerg({:.2f});".format(power)
-        self.str_alldata = "setalldata({});".format(list1)
-        print(self.str_alldata )
+        self.str_energy = "document.getElementById('energy').innerHTML = {:.2f}; ".format(energy)
 
         self.webview.page().runJavaScript(self.str_power)
         self.webview.page().runJavaScript(self.str_powerg)
+        self.webview.page().runJavaScript(self.str_energy)
+
+    def clearall(self):
+        self.str_power = "setdata_power({:.2f});".format(0)
+        self.str_powerg = "setdata_powerg({:.2f});".format(0)
+        self.str_energy = "document.getElementById('energy').innerHTML = {:.2f}; ".format(0)
+        self.str_alldata = "setdata__all({});".format([0,0,0,0,0,0,0,0,0])
+
+        self.webview.page().runJavaScript(self.str_power)
+        self.webview.page().runJavaScript(self.str_powerg)
+        self.webview.page().runJavaScript(self.str_energy)
         self.webview.page().runJavaScript(self.str_alldata)
-
-
-
-
-
-
-
 
 
     def tab1UI(self):
@@ -74,9 +73,19 @@ class TabDemo(QTabWidget):
         url="D:/莫愁/Documents/pythonproj/robotAPP/html2/index.html"
         self.webview.load(QUrl(url))
         self.webview.setZoomFactor(0.8)
+        self.webview.adjustSize()
         self.layoutweb.addWidget(self.webview)
         self.setTabText(0,'静态信息')
         self.tab1.setLayout(self.layoutweb)
+
+    def resizeEvent(self, QResizeEvent):
+        super(TabDemo, self).resizeEvent(QResizeEvent)
+        # 重新设置web大小
+        if self.width()==1166 and self.height()==813:
+            self.webview.setZoomFactor(1)
+        if self.width() == 804 and self.height() == 813:
+            self.webview.setZoomFactor(0.75)
+
 
     def tab2UI(self):
         #zhu表单布局，次水平布局
@@ -87,7 +96,7 @@ class TabDemo(QTabWidget):
         self.robot3d = sixMotorRobot3d(self,_3dwidget)
         _3dwidget.addItem(self.robot3d)
         _3dwidget.opts['distance'] = 40
-        _3dwidget.show()
+#        _3dwidget.show()
 
         layout.addWidget(_3dwidget)
 
@@ -114,8 +123,6 @@ class TabDemo(QTabWidget):
         layout.addWidget(self.datafft)
         self.tab4.setLayout(layout)
 
-    def receiveWebdatas(self):
-        pass
 
 if __name__ == '__main__':
     app=QApplication(sys.argv)
