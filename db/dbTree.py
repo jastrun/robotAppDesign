@@ -76,7 +76,7 @@ class dbTree(QTreeWidget):
 
     def acceptNewRobot(self, num, name, type):
         print(type)
-        if type == ' 六轴工业机器人':
+        if type == '六轴工业机器人':
             temprobot = SixAxisRobot(self.db, num, name)
         self.robotList.append(temprobot)
         # 同步数据库
@@ -84,11 +84,19 @@ class dbTree(QTreeWidget):
 
     def deleteRobot(self):
         # 删除节点
-        item = self.currentItem()
-        for robot in self.robotList:
-            if robot.num == item.data(0, 0):
-                robot.deleteSelf(self.db)  # 从数据库中删除机器人
-        item.parent().removeChild(item)
+        if self.currentItem() != None:
+            item = self.currentItem()
+            for robot in self.robotList:
+                print(robot[0])
+                print(robot[0].num)
+                print(item.data(1, 0))
+                if robot[0].num == item.data(1, 0):
+                    robot[0].deleteSelf(self.db)  # 从数据库中删除机器人
+            item.parent().removeChild(item)
+        else:
+            print("您还未选定节点")
+
+
 
         # 定义treewidget中item右键界面
 

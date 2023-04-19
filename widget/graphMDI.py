@@ -37,8 +37,10 @@ class graphMDI(QMdiArea):
 
     def graSlot_creatGra(self):
         # 获得树中的机器人节点
-        self.robotnode=self.parent.parent.robotTree.currentItem().parent()
-        self.motornode = self.parent.parent.robotTree.currentItem()
+        print(self.parent.parent.robotTree.currentItem())
+        if self.parent.parent.robotTree.currentItem() != None:
+            self.robotnode=self.parent.parent.robotTree.currentItem().parent()
+            self.motornode = self.parent.parent.robotTree.currentItem()
         # 获取机器人列表
         robotlist=self.parent.parent.robotTree.robotList
 

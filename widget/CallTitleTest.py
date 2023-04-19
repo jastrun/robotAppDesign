@@ -8,7 +8,7 @@ import sys
 from PyQt5.QtCore import pyqtSlot, Qt, QPoint
 from PyQt5.QtGui import QFont, QEnterEvent, QPixmap, QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QDialog, QVBoxLayout, QPushButton
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets, QtGui
 
 import mainWindow
 from TitleTest import Ui_Form
@@ -24,6 +24,9 @@ class TitleWindow(QWidget, Ui_Form):
         self.title = title
         self.icon_and_title()  # 设置图标与标题
 
+        self.setWindowIcon(QIcon(os.getcwd() + "\\..\\image\\机器人icon.png"))
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(os.getcwd() + "\\..\\image\\机器人.png")
+
 
 
         self._initDrag()  # 设置鼠标跟踪判断扳机默认值
@@ -37,6 +40,7 @@ class TitleWindow(QWidget, Ui_Form):
             self.widget_2_sub = widget_2_sub
             self.resize(self.widget_2_sub.width(), self.widget_2_sub.height() + self.widget.height())
             self.insert_widget()
+
 
     def insert_widget(self):
         # widget_2控件初始化与创建垂直布局QVBoxLayout
@@ -257,9 +261,19 @@ if __name__ == "__main__":
     # 适配2k等高分辨率屏幕,低分辨率屏幕可以缺省
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)
+    #开始动画
+    splash = QtWidgets.QSplashScreen(QtGui.QPixmap(os.getcwd() + "\\..\\image\\开始图片2.png"))
+    splash.setFixedSize(800,600)
+    splash.show()  # 显示启动界面
+    QtWidgets.qApp.processEvents()  # 处理主进程事件
+
     main = mainWindow.mainWindow()
-    myWin = TitleWindow(widget_2_sub=main, icon_path=None, title='Justran')
+    myWin = TitleWindow(widget_2_sub=main, icon_path=None, title='河北大学 张锟毕业设计')
+
+    splash.finish(myWin)
     myWin.show()
+
+
 
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("myappid")
     sys.exit(app.exec_())

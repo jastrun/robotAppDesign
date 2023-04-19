@@ -92,6 +92,9 @@ class graphSubWin(disClose):
             self.robot.motor6.recordData(list2str(self.timeseries), list2str(self.data), list2str(self.data))
 
         print("存入成功！")
+        self.msg_box = QMessageBox(QMessageBox.Information, '提示', '成功存入数据库！', QMessageBox.Cancel,
+                                   )
+        self.msg_box.show()
 
 
 if __name__ == '__main__':
