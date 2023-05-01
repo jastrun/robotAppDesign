@@ -5,7 +5,7 @@ from selenium import webdriver
 # 加载所需的库
 
 now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
-mstime = "2023-04-23 21:00:00.000000"
+mstime = "2023-05-01 00:15:00.000000"
 # 首先我们需要设置抢购的时间，格式要按照预设的格式改就可以了，个月数的一定在前面加上0，例如 “01”
 
 WebBrowser = webdriver.Chrome()

@@ -32,8 +32,9 @@ class dataFile(QObject):
         self.send_threading= threading.Thread(target=self.sendDataUnit)
 #        self.send_threading.start()
         print("file ok!")
-        self.msg_box.setText("加载完成！")
-        self.source_signal.emit("文件")
+        if self.parent!=None:
+            self.msg_box.setText("加载完成！")
+            self.source_signal.emit("文件")
 
     def sendDataUnit(self):
         timeseries = list(self.gettimeseries())
@@ -165,7 +166,8 @@ class dataFile(QObject):
 
 
 if __name__=='__main__':
-    robotinfor=dataFile(file_path,"六轴工业机器人","001")
+    robotinfor=dataFile(None)
+    robotinfor.loadData(file_path)
     J1data=robotinfor.getJxAngle('J1')
     datalist=list(J1data)
     print(datalist)
