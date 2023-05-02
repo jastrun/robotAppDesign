@@ -1,6 +1,7 @@
 from PyQt5 import QtCore
 
 from db.dbTree import *
+from net.sever_tcpnet import tcpconnect
 from serialOp.serialConfig import serialConfig
 from serialOp.serialdemo import *
 import os
@@ -41,6 +42,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
 
         self.datafile = None
 
+
         self.dataunit = []  # 数据源列表
         self.tab = TabDemo(self)  # 创建tab窗口
         self.dbToolBar = self.addToolBar("db")  # 创建数据库工具栏
@@ -79,6 +81,9 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
             self.datafile.dataunit_signal.disconnect(self.receiveDataUnit)
             self.datafile.powerAndEnergyAndspeed_signal.disconnect(self.receivePAEASUnit)
             self.datafile.alldata_signal.disconnect(self.receiveAllData)
+        if self.currentSourceLabel.text() == 'TCP/IP':
+            self.Source_net.changeState()
+
         self.stopAct.setDisabled(True)
         self.linkAct.setDisabled(False)
         self.tab.graphMdi.setTabsClosable(True)
@@ -235,9 +240,21 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         # 串口
         self.filemenu.addAction(self.serial_Open)  # 添加动作
 
-        self.readnetAct = QAction(QIcon(os.getcwd() + "\\..\\image\\Ethernet.png"), '网线', self)
+        self.readnetAct = QAction(QIcon(os.getcwd() + "\\..\\image\\Ethernet.png"), 'TCP/IP', self)
         self.filemenu.addAction(self.readnetAct)  # 添加动作
-        self.readnetAct.triggered.connect(self.OpenFile)
+        self.readnetAct.triggered.connect(self.OpenNet)
+
+    def OpenNet(self):
+        self.Source_net = tcpconnect()
+#        self.Source_net.show()
+        self.currentSourceLabel.setText("TCP/IP")
+
+        # 设置文件
+        self.Source_net.alldata_signal.connect(self.receiveAllData)
+        self.Source_net.dataunit_signal.connect(self.receiveDataUnit)
+#        self.Source_net.fileinfo_signal.connect(self.acceptFIleInfo)
+        self.Source_net.source_signal.connect(self.sourceChange)
+        self.Source_net.powerAndEnergyAndspeed_signal.connect(self.receivePAEASUnit)
 
     def OpenFile(self):
         self.datafile = dataFile(self)  # 数据文件
@@ -414,18 +431,23 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
                 self.datafile.alldata_signal.connect(self.receiveAllData)
             #         self.tab.robot3d.initializePos()                            #  回到初始位置
             #        self.dataunit_rela_signal.emit(self.dataunit_abs)  # 重新定位
-            self.stopAct.setDisabled(False)
-            self.linkAct.setDisabled(True)
-            self.tab.graphMdi.setTabsClosable(False)
-            self.clearAct.setDisabled(True)
-            self.startFlag=True
 
-            print("self.timer.stopFlag:",self.timer.stopFlag)
-            # <计时器尚未开始，无法获取当前时间！> 需要修改
-            if self.timer.stopFlag == True:
-                self.timer.reStart()
-            else:
-                self.timer.start()
+
+        if self.currentSourceLabel.text() == 'TCP/IP':
+            self.Source_net.changeState()
+
+        self.stopAct.setDisabled(False)
+        self.linkAct.setDisabled(True)
+        self.tab.graphMdi.setTabsClosable(False)
+        self.clearAct.setDisabled(True)
+        self.startFlag = True
+
+        print("self.timer.stopFlag:", self.timer.stopFlag)
+        # <计时器尚未开始，无法获取当前时间！> 需要修改
+        if self.timer.stopFlag == True:
+            self.timer.reStart()
+        else:
+            self.timer.start()
 
         if self.currentSourceLabel.text() == '未选定':
             self.msg_box.setWindowTitle("警告")

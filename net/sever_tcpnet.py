@@ -1,6 +1,7 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 import json
+import os
 import socket
 import threading
 import time
@@ -8,6 +9,7 @@ import time
 import sys
 from os import error
 
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import *
 
 # 用 socket() 函数来创建套接字
@@ -22,10 +24,20 @@ from readExecl import dataFile, file_path
 # listJ1 = list(robotinfor.getJ1())
 from timerSeries import timeseries
 
+def readQss(style):
+    with open(style, 'r') as f:
+        return f.read()
 
 class tcpconnect(QWidget):
-    def __init__(self):
-        super().__init__()
+    # 信号初始化
+    fileinfo_signal = pyqtSignal(str)
+    source_signal = pyqtSignal(str)
+    dataunit_signal = pyqtSignal(list, list)
+    powerAndEnergyAndspeed_signal = pyqtSignal(float, float, float)
+    alldata_signal = pyqtSignal(list)
+
+    def __init__(self,Parent=None):
+        super().__init__(Parent)
         self.initFlags()
         self.initUI()
         self.initSlot()
@@ -39,12 +51,17 @@ class tcpconnect(QWidget):
         self.statelabel = QLabel("点击开始链接")
         self.opbtn = QPushButton("开始")
         self.layout = QVBoxLayout()
+        self.statelabel.setAlignment(Qt.AlignCenter)
         self.layout.addWidget(self.statelabel)
         self.layout.addWidget(self.opbtn)
         self.setLayout(self.layout)
-        self.resize(200, 100)
+        self.resize(400, 300)
 
-        self.show()
+        str = os.getcwd() + "\\..\\qssStyle\\new7.qss"
+        qssStyle = readQss(str)
+        self.setStyleSheet(qssStyle)
+
+
         print("initUI ok!")
 
     def initSlot(self):
@@ -68,6 +85,7 @@ class tcpconnect(QWidget):
             print(self.severTh.is_alive())
             self.statelabel.setText("点击开始链接")
             self.opbtn.setText("开始")
+            self.statelabel.setAlignment(Qt.AlignCenter)
             self.runningFLag = False
             self.startFlag = False
 
@@ -96,12 +114,13 @@ class tcpconnect(QWidget):
         print(mes)
 
     def runsever(self):
-
+        self.source_signal.emit("TCP/IP")
         try:
             print("Waiting for a connection")
             # 被动接受TCP客户端连接,(阻塞式)等待连接的到来
             self.connection, self.client_address = self.sock.accept()
             print("Connection from", self.client_address)
+            self.statelabel.setText("Connection from"+str(self.client_address))
         except socket.error as err:
             print(err)
 
@@ -113,6 +132,7 @@ class tcpconnect(QWidget):
                 print(json_string[0])
                 print(json_string[1])
                 print(json_string[2])
+                self.signalSend(json_string[0],json_string[1],json_string[2])
             except AttributeError as err:
                 print(err)
                 break
@@ -120,6 +140,13 @@ class tcpconnect(QWidget):
             self.connection.close()
         except AttributeError as err:
             print(err)
+
+    def signalSend(self,dataunit,PAE,alldata):
+
+
+        self.dataunit_signal.emit(dataunit[0], dataunit[1])
+        self.powerAndEnergyAndspeed_signal.emit(PAE[0],PAE[1],PAE[2])
+        self.alldata_signal.emit(alldata)
 
 
 
@@ -131,7 +158,7 @@ class tcpconnect(QWidget):
 if __name__ == '__main__':
     app1 = QApplication(sys.argv)
     main = tcpconnect()
-
+    main.show()
     sys.exit(app1.exec_())
 
 
