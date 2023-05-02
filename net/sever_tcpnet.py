@@ -6,6 +6,8 @@ import threading
 import time
 
 import sys
+from os import error
+
 from PyQt5.QtWidgets import *
 
 # 用 socket() 函数来创建套接字
@@ -18,13 +20,14 @@ from readExecl import dataFile, file_path
 # robotinfor=dataFile(None)
 # robotinfor.loadData(file_path)
 # listJ1 = list(robotinfor.getJ1())
+from timerSeries import timeseries
+
 
 class tcpconnect(QWidget):
     def __init__(self):
         super().__init__()
         self.initFlags()
         self.initUI()
-        self.initSock()
         self.initSlot()
 
 
@@ -57,53 +60,68 @@ class tcpconnect(QWidget):
         self.sock.listen(1)
         print("initSock ok!")
 
+
     def changeState(self):
         # 初始化标志
 
-
         if self.startFlag:  # 若此时正在开始 点击按钮
+            print(self.severTh.is_alive())
             self.statelabel.setText("点击开始链接")
             self.opbtn.setText("开始")
             self.runningFLag = False
             self.startFlag = False
+
+            self.sock.close()
+
         else:
             self.statelabel.setText("等待链接...")
             self.opbtn.setText("停止")
             self.runningFLag = True
             self.startFlag = True
 
+            self.initSock()
+            self.severTh = threading.Thread(target=lambda: self.runsever())
+            self.severTh.start()
+            print(self.severTh.is_alive())
 
+    def deadtimeshow(self,sec,mes):
+        timer = timeseries()
+        timer.start()
+        cur=0
+        for cur in range(int(sec)):
+            print(int(sec-timer.getCurTime()))
+            time.sleep(1)
 
-        self.severTh = threading.Thread(target=lambda: self.runsever())
-        self.severTh.start()
+        timer.end()
+        print(mes)
 
     def runsever(self):
-        print(self.runningFLag)
-        while self.runningFLag:
+
+        try:
             print("Waiting for a connection")
             # 被动接受TCP客户端连接,(阻塞式)等待连接的到来
-            connection, client_address = self.sock.accept()
-            print("Connection from", client_address)
+            self.connection, self.client_address = self.sock.accept()
+            print("Connection from", self.client_address)
+        except socket.error as err:
+            print(err)
+
+        while self.startFlag:
+
             try:
+                data = self.connection.recv(1024)  # 阻塞接收
+                json_string = json.loads(data)
+                print(json_string[0])
+                print(json_string[1])
+                print(json_string[2])
+            except AttributeError as err:
+                print(err)
+                break
+        try:
+            self.connection.close()
+        except AttributeError as err:
+            print(err)
 
 
-                while True:
-                    # 需要做一个判断确定对方主机是否断开了链接
-                    data = connection.recv(1024)
-                    json_string = json.loads(data)
-                    print(json_string[0])
-                    print(json_string[1])
-                    print(json_string[2])
-
-                    if data == '0' or self.runningFLag == False:
-                        break
-#                    print("Receive '%s'" % json.loads(data))
-
-
-            finally:
-                pass
-     #           connection.close()
-     #           print("close sock!")
 
 
 

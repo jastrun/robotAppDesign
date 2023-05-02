@@ -33,8 +33,8 @@ class robotsimlink():
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print('Connecting to %s:%s.' % self.server_address)
-        self.sock.connect(self.server_address)
-        print("initSock ok!")
+        flag = self.sock.connect(self.server_address)
+        print(flag)
  #       self.sendOnedata("testing")
 
         self.initdata()
@@ -99,8 +99,6 @@ class robotsimlink():
                                 data_xAxis[i], data_yAxis[i], data_zAxis[i]]))
                               )
             self.sock.send(data.encode('utf-8'))
-
-
 
 
             print("send ok!")
