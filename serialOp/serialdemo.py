@@ -44,8 +44,8 @@ class Pyqt5_Serial(QtWidgets.QWidget, Ui_Form):
         self.timer_send_cb.stateChanged.connect(self.data_send_timer)
 
         # 定时器接收数据
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.data_receive)
+        self.timer_receive = QTimer(self)
+        self.timer_receive.timeout.connect(self.data_receive)
 
         # 清除发送窗口
         self.s3__clear_button.clicked.connect(self.send_data_clear)
@@ -91,7 +91,7 @@ class Pyqt5_Serial(QtWidgets.QWidget, Ui_Form):
             return None
 
         # 打开串口接收定时器，周期为2ms
-        self.timer.start(2)
+        self.timer_receive.start(2)
 
         if self.ser.isOpen():
             self.open_button.setEnabled(False)
@@ -103,7 +103,7 @@ class Pyqt5_Serial(QtWidgets.QWidget, Ui_Form):
             print('4')
     # 关闭串口
     def port_close(self):
-        self.timer.stop()
+        self.timer_receive.stop()
         self.timer_send.stop()
         try:
 
@@ -157,6 +157,7 @@ class Pyqt5_Serial(QtWidgets.QWidget, Ui_Form):
             self.port_close()
             return None
         if num > 0:
+            print("*2")
             data = self.ser.read(num)
             num = len(data)
             # hex显示

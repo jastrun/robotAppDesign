@@ -136,10 +136,10 @@ class sixMotorRobot3d(GLGraphicsItem):
         # 创建机器人各个关节
         self.J1 = rotateJx_1()
         self.J2 = rotateJx_2()
-        self.J3 = rotateJx_1()
-        self.J4 = rotateJx_2()
-        self.J5 = rotateJx_1()
-        self.J6 = rotateJx_2()
+        self.J3 = rotateJx_2()
+        self.J4 = rotateJx_1()
+        self.J5 = rotateJx_2()
+        self.J6 = rotateJx_1()
 
         self.J1.setParentItem(self)
         self.J1.link(self.J2)

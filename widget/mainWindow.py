@@ -436,11 +436,12 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         if self.currentSourceLabel.text() == 'TCP/IP':
             self.Source_net.changeState()
 
-        self.stopAct.setDisabled(False)
-        self.linkAct.setDisabled(True)
-        self.tab.graphMdi.setTabsClosable(False)
-        self.clearAct.setDisabled(True)
-        self.startFlag = True
+        if self.currentSourceLabel.text() != "未选定":
+            self.stopAct.setDisabled(False)
+            self.linkAct.setDisabled(True)
+            self.tab.graphMdi.setTabsClosable(False)
+            self.clearAct.setDisabled(True)
+            self.startFlag = True
 
         print("self.timer.stopFlag:", self.timer.stopFlag)
         # <计时器尚未开始，无法获取当前时间！> 需要修改
