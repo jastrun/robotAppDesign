@@ -46,13 +46,15 @@ def drawCube(size):
     # 将中心点转移到中心点
     mesh = gl.GLMeshItem(vertexes=vertexes, faces=faces, smooth=False, drawEdges=True, color=[0.5, 0.5, 1, 1])
     mesh.translate(-chang / 2, -kuan / 2, -gao / 2)
+    mesh.setGLOptions("translucent")  # 设置透明模式
     return mesh
 
 
 def drawSphere(radius):
     bitMd = gl.MeshData.sphere(rows=20, cols=20, radius=radius)
     sphere_mesh = gl.GLMeshItem(meshdata=bitMd,
-                                smooth=True, drawEdges=True, color=[1, 0, 0, 1])
+                                smooth=True, drawEdges=True, color=[1, 0, 0.6, 1])
+    sphere_mesh.setGLOptions("translucent")  # 设置透明模式
     return sphere_mesh
 
 
@@ -65,28 +67,37 @@ def drawSphere(radius):
 
 # 创建一个广义轴
 class creatJx(GLGraphicsItem):
-    def __init__(self, pos=[0, 0, 0], len=6):
+    def __init__(self, pos=[0, 0, 0], len=6 ,width=6):
         super().__init__()
         self.pos = pos
         self.nextJx = None
         self.len = len
+        self.width = width
         self.mesh3 = drawSphere(1)
         self.mesh2 = drawCube([1, 1, self.len])
-        self.mesh1 = drawCube([1, 1, self.len])
+        self.mesh1 = drawCube([1, 1, self.width])
         self.local = [0, 0, 0]
 
         self.initShape()
         self.translate(*pos)
 
-    def initShape(self):
+
+
+    def initShape(self,c = [[1, 0, 1, 1], [1, 0, 1, 1], [1, 0, 1, 1]]):
+
         self.mesh1.translate(0, 0, self.len / 2)
         self.mesh2.rotate(90, 1, 0, 0)
         self.mesh2.translate(0, 0, self.len)
-        self.mesh3.translate(0, 0, self.len)
+        self.mesh3.translate(0, 0, self.len)  # 球
 
         self.mesh1.setParentItem(self)
         self.mesh2.setParentItem(self)
         self.mesh3.setParentItem(self)
+        self.setColor(*c)
+
+
+
+
 
     def link(self, nextJx):
         self.nextJx = nextJx
@@ -96,19 +107,27 @@ class creatJx(GLGraphicsItem):
         self.nextJx.translate(0, 0, self.len)
         self.nextJx.setParentItem(self)
 
-    def setLen(self,len):
-        self.len=len
+    def setColor(self,c1,c2,c3):
+        self.mesh1.setColor(c1)
+        self.mesh2.setColor(c2)
+        self.mesh3.setColor(c3)  # 圆
+
+
+
+    def setStyle(self,size,c):
+        self.len=size[0]
+        self.width=size[1]
 
         self.mesh1.hide()
         self.mesh2.hide()
         self.mesh3.hide()
 
         self.mesh3 = drawSphere(1)
-        self.mesh2 = drawCube([1, 1, self.len])
+        self.mesh2 = drawCube([1, 1, self.width])
         self.mesh1 = drawCube([1, 1, self.len])
 
 
-        self.initShape()
+        self.initShape(c)
 
 
 # 创建一个只可以绕z轴旋转的轴
@@ -140,6 +159,9 @@ class sixMotorRobot3d(GLGraphicsItem):
         self.J4 = rotateJx_1()
         self.J5 = rotateJx_2()
         self.J6 = rotateJx_1()
+
+
+
 
         self.J1.setParentItem(self)
         self.J1.link(self.J2)
@@ -189,13 +211,30 @@ class sixMotorRobot3d(GLGraphicsItem):
         self.angle_J6 = self.angle_J6+a6
 
 
-    def setlen(self, l1, l2, l3, l4, l5, l6):
-        self.J1.setLen(l1)
-        self.J2.setLen(l2)
-        self.J3.setLen(l3)
-        self.J4.setLen(l4)
-        self.J5.setLen(l5)
-        self.J6.setLen(l6)
+    def setStyle(self, l1, l2, l3, l4, l5, l6):
+        self.J1.hide()
+
+        self.J1 = rotateJx_1()
+        self.J2 = rotateJx_2()
+        self.J3 = rotateJx_2()
+        self.J4 = rotateJx_1()
+        self.J5 = rotateJx_2()
+        self.J6 = rotateJx_1()
+
+        self.J1.setStyle(*l1)
+        self.J2.setStyle(*l2)
+        self.J3.setStyle(*l3)
+        self.J4.setStyle(*l4)
+        self.J5.setStyle(*l5)
+        self.J6.setStyle(*l6)
+
+        self.J1.setParentItem(self)
+        self.J1.link(self.J2)
+        self.J2.link(self.J3)
+        self.J3.link(self.J4)
+        self.J4.link(self.J5)
+        self.J5.link(self.J6)
+
 
     def receiveData(self,datalist):
         self.initializePos()  # 回归初始坐标

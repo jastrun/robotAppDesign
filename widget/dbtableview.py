@@ -7,6 +7,14 @@ from readExecl import *
 
 class dataselect(QWidget):
     datas_signal = pyqtSignal(list,list)
+
+    # 信号初始化
+    fileinfo_signal = pyqtSignal(str)
+    source_signal = pyqtSignal(str)
+    dataunit_signal = pyqtSignal(list, list)
+    powerAndEnergyAndspeed_signal = pyqtSignal(float, float, float)
+    alldata_signal = pyqtSignal(list)
+
     def __init__(self):
         super().__init__()
         self.resize(800,400)
@@ -78,7 +86,7 @@ class dataselect(QWidget):
 
 
 
-        print(data)
+        print(list(data))
 
 
 

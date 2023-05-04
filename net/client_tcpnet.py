@@ -117,32 +117,6 @@ class robotsimlink():
         print("send ok!")
 
 
-def check_tcp_status(ip, port):
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    server_address = (ip, port)
-    print('Connecting to %s:%s.' % server_address)
-    sock.connect(server_address)
-
-    print("开始发送listJ1")
-    for mes in listJ1:
-        sleep(1)
-        print(str(mes))
-        str_mes = str(mes)
-        sock.sendall(str_mes.encode())
-
-    sock.sendall('0')
-
-
-
-
-
-
-    print('Closing socket.')
-    sleep(1)
-    data = sock.recv(1024)
-    print(data.decode())
-    sock.close()
 
 
 if __name__ == "__main__":

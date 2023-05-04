@@ -1,8 +1,46 @@
+# -*- coding: utf-8 -*-
+
+from PyQt5.QtWidgets import QApplication, QPushButton, QColorDialog, QWidget
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QColor
+import sys
 
 
-list1=[1.564651,5.45641,5.65465165]
+class ColorDialog(QWidget):
+    def __init__(self):
+        super().__init__()
+        # 颜色值
+        color = QColor(0, 0, 0)
+        # 位置
+        self.setGeometry(300, 300, 350, 280)
+        # 标题
+        self.setWindowTitle('颜色选择')
+        # 按钮名称
+        self.button = QPushButton('Dialog', self)
+        self.button.setFocusPolicy(Qt.NoFocus)
+        # 按钮位置
+        self.button.move(40, 20)
+        # 按钮绑定方法
+        self.button.clicked.connect(self.showDialog)
+        self.setFocus()
+        self.widget = QWidget(self)
+        self.widget.setStyleSheet('QWidget{background-color:%s} ' % color.name())
+        self.widget.setGeometry(130, 22, 200, 100)
+        self.button.setStyleSheet('QWidget{background-color:%s} ' % color.name())
 
-list1=[float("%.2f"%ele) for ele in list1]
+    def showDialog(self):
+        col = QColorDialog.getColor()
+
+        print(col.red(), "\n")
+        if col.isValid():
+            self.widget.setStyleSheet('QWidget {background-color:%s}' % col.name())
+            self.button.setStyleSheet('QWidget{background-color:%s} ' % col.name())
+        print(col.red(),col.green(),col.blue())
+        return col.red(),col.green(),col.blue()
 
 
-print(list1)
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    qb = ColorDialog()
+    qb.show()
+    sys.exit(app.exec_())

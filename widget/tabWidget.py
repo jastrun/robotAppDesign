@@ -11,6 +11,7 @@ from dataFFT import dataFFT
 from dbtableview import dataselect
 from graphMDI import *
 from numpytest import sixMotorRobot3d
+from _3drobotCon import _3drobotCon
 
 
 class TabDemo(QTabWidget):
@@ -94,6 +95,18 @@ class TabDemo(QTabWidget):
 
         _3dwidget=gl.GLViewWidget()
         self.robot3d = sixMotorRobot3d(self,_3dwidget)
+        self.styleWid = _3drobotCon() # 配置窗口初始化
+        self.styleWid.styledata_singal.connect(self.changeStyle)
+        #        self.robot3d.setlen(2,2,2,2,2,2)
+        self.robot3d.setStyle([[2,2], [[1, 0, 1, 1], [1, 0, 1, 1], [1, 0, 1, 1]]],
+                      [[3,3], [[1, 0, 1, 1], [1, 0, 1, 1], [1, 0, 1, 1]]],
+                      [[6,6], [[1, 0, 1, 1], [1, 0, 1, 1], [1, 0, 1, 1]]],
+                      [[2,2], [[1, 0, 1, 1], [1, 0, 1, 1], [1, 0, 1, 1]]],
+                      [[2,2], [[1, 0, 1, 1], [1, 0, 0, 1], [1, 0, 1, 1]]],
+                      [[2,6], [[1, 1, 0, 1], [1, 0, 1, 1], [1, 0.5, 1, 1]]]
+                      )
+
+
         _3dwidget.addItem(self.robot3d)
         _3dwidget.opts['distance'] = 40
 #        _3dwidget.show()
@@ -122,6 +135,9 @@ class TabDemo(QTabWidget):
         self.datafft=dataFFT()
         layout.addWidget(self.datafft)
         self.tab4.setLayout(layout)
+
+    def changeStyle(self,style):
+        self.robot3d.setStyle(*style)
 
 
 if __name__ == '__main__':

@@ -172,9 +172,6 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         # 数据库窗口
         self.dbmenu = self.menubar.addMenu("数据库")
 
-        self.dbAct_syndb = QAction(QIcon(os.getcwd() + "\\..\\image\\同步.png"), '同步数据库到树', self)  # 创建动作
-        self.dbmenu.addAction(self.dbAct_syndb)  # 添加动作
-        self.dbAct_syndb.triggered.connect(self.robotTree.TBdb)  # 关联相关操作
 
         self.dbAct_newRobot = QAction(QIcon(os.getcwd() + "\\..\\image\\新建机器人.png"), '新建机器人', self)  # 创建动作
         self.dbmenu.addAction(self.dbAct_newRobot)  # 添加动作
@@ -186,9 +183,6 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         # 图窗口
         self.graphmenu = self.menubar.addMenu("图")
 
-        self.graAct_creatGra = QAction(QIcon(os.getcwd() + "\\..\\image\\绘图.png"), '新建图', self)  # 创建动作
-        self.graphmenu.addAction(self.graAct_creatGra)  # 添加动作
-        self.graAct_creatGra.triggered.connect(self.tab.graphMdi.graSlot_creatGra)  # 关联相关操作
 
         self.graAct_CascadeMode = QAction(QIcon(os.getcwd() + "\\..\\image\\级联.png"), '级联模式', self)  # 创建动作
         self.graphmenu.addAction(self.graAct_CascadeMode)  # 添加动作
@@ -231,18 +225,23 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.viewmenu.addAction(self.serialreceiveView)  # 添加动作
         self.serialreceiveView.triggered.connect(self.serialreceiveVisable)
 
+        self.robotstyleView = QAction(QIcon(os.getcwd() + "\\..\\image\\机器人设置.png"), '机器人设置', self)
+        self.viewmenu.addAction(self.robotstyleView)  # 添加动作
+        self.robotstyleView.triggered.connect(self.robotStyleset)
+
         # 文件窗口
         self.filemenu = self.menubar.addMenu("数据源")
 
         self.readfileAct = QAction(QIcon(os.getcwd() + "\\..\\image\\读取模板.png"), '文件', self)
         self.filemenu.addAction(self.readfileAct)  # 添加动作
         self.readfileAct.triggered.connect(self.OpenFile)
-        # 串口
-        self.filemenu.addAction(self.serial_Open)  # 添加动作
 
         self.readnetAct = QAction(QIcon(os.getcwd() + "\\..\\image\\Ethernet.png"), 'TCP/IP', self)
         self.filemenu.addAction(self.readnetAct)  # 添加动作
         self.readnetAct.triggered.connect(self.OpenNet)
+
+    def robotStyleset(self):
+        self.tab.styleWid.show()
 
     def OpenNet(self):
         self.Source_net = tcpconnect()
@@ -289,14 +288,12 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
 
     def initToolBar(self):
         # 数据库
-        self.dbToolBar.addAction(self.dbAct_syndb)
         self.dbToolBar.addAction(self.dbAct_newRobot)
         self.dbToolBar.addAction(self.dbAct_deleteRobot)
 
         # 图
         self.graphToolBar = QToolBar("graph", self)
         self.addToolBar(self.graphToolBar)
-        self.graphToolBar.addAction(self.graAct_creatGra)
         self.graphToolBar.addAction(self.graAct_CascadeMode)
         self.graphToolBar.addAction(self.graAct_TabMode)
 
