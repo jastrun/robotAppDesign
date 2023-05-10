@@ -11,12 +11,12 @@ from tabWidget import *
 from graphMDI import *
 from readExecl import *
 from timerSeries import timeseries
+import readdatafromdata
 
 
 def readQss(style):
     with open(style, 'r') as f:
         return f.read()
-
 
 
 
@@ -41,10 +41,12 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.currentRobotLabel = QLabel("未选定")
 
         self.datafile = None
+        self.robotnum = None
 
-
+        self.robotdata = []  # 机器人全部数据
         self.dataunit = []  # 数据源列表
         self.tab = TabDemo(self)  # 创建tab窗口
+        self.readdatafromdbase = readdatafromdata.dataselect()
         self.dbToolBar = self.addToolBar("db")  # 创建数据库工具栏
         self.robotTree = dbTree(db, self)  # 获取数据库部分的树
         self.robotTree.setMinimumWidth(350)
@@ -84,6 +86,9 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         if self.currentSourceLabel.text() == 'TCP/IP':
             self.Source_net.changeState()
 
+        if self.currentSourceLabel.text() == '数据库':
+            self.readdatafromdbase.changeState()
+
         self.stopAct.setDisabled(True)
         self.linkAct.setDisabled(False)
         self.tab.graphMdi.setTabsClosable(True)
@@ -96,6 +101,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
     def receiveAllData(self,list1):
         list1 = [float("%.2f" % ele) for ele in list1]
         self.alldata_signal.emit(list1)
+        print(111)
 
 
     def receiveDataUnit(self, datalist1, datalist2):
@@ -183,6 +189,9 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         # 图窗口
         self.graphmenu = self.menubar.addMenu("图")
 
+        self.graAct_creatGra = QAction(QIcon(os.getcwd() + "\\..\\image\\绘图.png"), '新建图', self)  # 创建动作
+        self.graphmenu.addAction(self.graAct_creatGra)  # 添加动作
+        self.graAct_creatGra.triggered.connect(self.tab.graphMdi.graSlot_creatGra)  # 关联相关操作
 
         self.graAct_CascadeMode = QAction(QIcon(os.getcwd() + "\\..\\image\\级联.png"), '级联模式', self)  # 创建动作
         self.graphmenu.addAction(self.graAct_CascadeMode)  # 添加动作
@@ -240,11 +249,37 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.filemenu.addAction(self.readnetAct)  # 添加动作
         self.readnetAct.triggered.connect(self.OpenNet)
 
+        self.readDbAct = QAction(QIcon(os.getcwd() + "\\..\\image\\读取数据库.png"), '数据库', self)
+        self.filemenu.addAction(self.readDbAct)  # 添加动作
+        self.readDbAct.triggered.connect(self.Opendbdatasheet)
+
+    def Opendbdatasheet(self):
+        self.readdatafromdbase = readdatafromdata.dataselect()
+        self.readdatafromdbase.show()
+        self.readdatafromdbase.source_signal.connect(self.sourceChange)
+
+#        self.readdatafromdbase.robotdata_signal.connect(self.receiveRobotdata)
+        #        self.Source_net.show()
+
+        # 设置文件
+        self.readdatafromdbase.alldata_signal.connect(self.receiveAllData)
+        self.readdatafromdbase.dataunit_signal.connect(self.receiveDataUnit)
+        #        self.Source_net.fileinfo_signal.connect(self.acceptFIleInfo)
+        self.readdatafromdbase.source_signal.connect(self.sourceChange)
+        self.readdatafromdbase.powerAndEnergyAndspeed_signal.connect(self.receivePAEASUnit)
+
     def robotStyleset(self):
         self.tab.styleWid.show()
 
+    def receiveRobotdata(self,data):
+        self.robotdata.append(data)
+        print(len(self.robotdata))
+
+
     def OpenNet(self):
         self.Source_net = tcpconnect()
+        self.robotdata = []  # 请空机器人信息
+        self.Source_net.robotdata_signal.connect(self.receiveRobotdata)
 #        self.Source_net.show()
         self.currentSourceLabel.setText("TCP/IP")
 
@@ -262,6 +297,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.datafile.dataunit_signal.connect(self.receiveDataUnit)
         self.datafile.fileinfo_signal.connect(self.acceptFIleInfo)
         self.datafile.source_signal.connect(self.sourceChange)
+
         self.datafile.powerAndEnergyAndspeed_signal.connect(self.receivePAEASUnit)
         self.datafile.openFile()
 
@@ -329,9 +365,31 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.clearAct.triggered.connect(self.clearInfo)
         self.clearAct.setDisabled(True)
 
+        self.savedata2dbAct = QAction(QIcon(os.getcwd() + "\\..\\image\\保存到数据库.png"), '保存到数据库', self)
+        self.linkInfoTooBar.addAction(self.savedata2dbAct)  # 添加动作
+        self.savedata2dbAct.triggered.connect(self.savedata2db)
+
+
         # Using a QToolBar object and a toolbar area
         helpToolBar = QToolBar("Help", self)
         self.addToolBar(Qt.LeftToolBarArea, helpToolBar)
+
+    def savedata2db(self):
+        # 获取目前的机器人树节点
+        if self.robotTree.currentItem() != None:
+            self.robotnode=self.robotTree.currentItem().parent()
+            self.motornode = self.robotTree.currentItem()
+
+        # 获取机器人映射列表
+        robotlist = self.robotTree.robotList
+
+        # 遍历机器人列表找到对应的机器人数据元
+        for i in robotlist:
+            if i[1] == self.robotnode:
+                self.robotnow = i[0]  # 找到对应及机器人数据元
+
+        self.robotnow.recordData(json.dumps(self.robotdata))
+        print(self.robotdata)
 
     def initSerial(self):
         self.serialWidget = QWidget()  # 串口窗口
@@ -433,6 +491,9 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         if self.currentSourceLabel.text() == 'TCP/IP':
             self.Source_net.changeState()
 
+        if self.currentSourceLabel.text() == '数据库':
+            self.readdatafromdbase.changeState()
+
         if self.currentSourceLabel.text() != "未选定":
             self.stopAct.setDisabled(False)
             self.linkAct.setDisabled(True)
@@ -469,5 +530,6 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
     def robotlabelchange(self, item):
         if item.parent().text(0) == '机器人数据库':
             self.currentRobotLabel.setText(item.text(0) + item.text(1))
+            self.robotnum = item.text(1)
         else:
             self.currentRobotLabel.setText(item.parent().text(0) + item.parent().text(1))

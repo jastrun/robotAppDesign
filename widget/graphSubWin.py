@@ -1,3 +1,4 @@
+import json
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt, pyqtSignal
@@ -78,6 +79,7 @@ class graphSubWin(disClose):
     def save2db(self):
         #   print(SheetQuary(db, 'motor','where ofRobotNum={}'.format('009')))
         #   datafile = dataFile(r'data.xlsx', '六轴工业机器人', '999')
+
         if self.motorname == 'J1':
             self.robot.motor1.recordData(list2str(self.timeseries), list2str(self.data), list2str(self.data))
         if self.motorname == 'J2':

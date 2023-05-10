@@ -4,6 +4,7 @@ import datetime
 from datetime import date
 
 from readExecl import dataFile
+import json
 
 try:
     db = pymysql.connect(host="localhost",
@@ -31,6 +32,27 @@ class DataFormat:
     def __str__(self):
         return '无'
 
+class dataunit():
+    def __init__(self,Rnum,data):
+        today = datetime.datetime.now()
+        self.time = str(today)
+
+        self.Rnum=Rnum
+        self.data=data
+
+    # 上载数据
+    def uploadData(self, db):
+        cur = db.cursor()
+        try:
+            sql = "INSERT dataunit(robotnum,time,data) " \
+                  "VALUES('{}','{}','{}')" \
+                  "".format(self.Rnum, self.time, self.data)
+            cur.execute(sql)
+            # 提交数据
+            db.commit()
+            print("数据已存入数据库中！")
+        except pymysql.Error as e:
+            print("数据存入数据库失败!" + str(e))
 
 # 角度数据格式
 class AngleData(DataFormat):
@@ -169,6 +191,10 @@ class Robot:
         except pymysql.Error as e:
             print("更新属性失败！".format(num) + str(e))
 
+    def recordData(self,data):
+        data = dataunit(self.num,data)
+        data.uploadData(db)
+
 
 # 六轴工业机器人
 class SixAxisRobot(Robot):
@@ -216,7 +242,9 @@ if __name__ == "__main__":
     # 测试代码
     robotdemo=SixAxisRobot(db,'998')
  #   print(SheetQuary(db, 'motor','where ofRobotNum={}'.format('009')))
-    datafile = dataFile(r'data.xlsx','六轴工业机器人','999')
+    datafile = dataFile(None)
+    datafile.loadData(r'data.xlsx')
     dataJ1=datafile.getJ1()
-    robotdemo.motor1.recordData(list2str(dataJ1),list2str(dataJ1))
+    print(type(dataJ1))
+    robotdemo.recordData(json.dumps(list(dataJ1)))
 # 若当前代码不是main则数据库不会自己关闭

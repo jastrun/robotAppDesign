@@ -98,6 +98,7 @@ class robotsimlink():
                                 angle_J4[i], angle_J5[i], angle_J6[i],
                                 data_xAxis[i], data_yAxis[i], data_zAxis[i]]))
                               )
+            print(type(json.loads(data)))
             try:
                 self.sock.send(data.encode('utf-8'))
             except socket.error as err:

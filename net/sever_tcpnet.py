@@ -36,6 +36,8 @@ class tcpconnect(QWidget):
     powerAndEnergyAndspeed_signal = pyqtSignal(float, float, float)
     alldata_signal = pyqtSignal(list)
 
+    robotdata_signal = pyqtSignal(list)
+
     def __init__(self,Parent=None):
         super().__init__(Parent)
         self.initFlags()
@@ -129,6 +131,7 @@ class tcpconnect(QWidget):
             try:
                 data = self.connection.recv(1024)  # 阻塞接收
                 json_string = json.loads(data)
+                self.robotdata_signal.emit(json_string)
                 print(json_string[0])
                 print(json_string[1])
                 print(json_string[2])
