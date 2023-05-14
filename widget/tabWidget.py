@@ -76,7 +76,7 @@ class TabDemo(QTabWidget):
         self.webview.setZoomFactor(0.8)
         self.webview.adjustSize()
         self.layoutweb.addWidget(self.webview)
-        self.setTabText(0,'静态信息')
+        self.setTabText(0,'基础信息')
         self.tab1.setLayout(self.layoutweb)
 
     def resizeEvent(self, QResizeEvent):

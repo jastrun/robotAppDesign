@@ -18,17 +18,22 @@ class dataFile(QObject):
     dataunit_signal = pyqtSignal(list,list)
     powerAndEnergyAndspeed_signal = pyqtSignal(float,float,float)
     alldata_signal = pyqtSignal(list)
+    robotdata_signal = pyqtSignal(tuple)
 
     def __init__(self,parent):
         super(dataFile,self).__init__()
         self.parent=parent
+        self.startFlag = False
 
+    def startsthreading(self):
+        self.send_threading = threading.Thread(target=self.sendDataUnit)
+        self.send_threading.start()
 
     def loadData(self,file_path):
 
         self.file = pd.read_excel(file_path, sheet_name="Sheet1")
 
-
+        self.startFlag = True
         self.send_threading= threading.Thread(target=self.sendDataUnit)
 #        self.send_threading.start()
         print("file ok!")
@@ -55,7 +60,7 @@ class dataFile(QObject):
 
         print("file ok!")
         i = 0
-        while i <= len(timeseries):
+        while i <= len(timeseries) and self.startFlag:
             sleep(0.026167)
             if i == 0:
                 a1 = angle_J1[i]
@@ -79,6 +84,11 @@ class dataFile(QObject):
 
             self.powerAndEnergyAndspeed_signal.emit(motorPower[i], motorEnergy[i],speed[i])
             self.alldata_signal.emit([angle_J1[i],angle_J2[i],angle_J3[i],angle_J4[i],angle_J5[i], angle_J6[i],data_xAxis[i],data_yAxis[i],data_zAxis[i]])
+            self.robotdata_signal.emit(((dataunit1,dataunit2),
+                              (motorPower[i], motorEnergy[i],speed[i]),
+                              ([angle_J1[i], angle_J2[i], angle_J3[i],
+                                angle_J4[i], angle_J5[i], angle_J6[i],
+                                data_xAxis[i], data_yAxis[i], data_zAxis[i]])))
 
             i = i + 1
         print("send  ok!")

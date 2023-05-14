@@ -79,10 +79,10 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
 
 
     def stopLink(self):
+
         if self.currentSourceLabel.text() == '文件':
-            self.datafile.dataunit_signal.disconnect(self.receiveDataUnit)
-            self.datafile.powerAndEnergyAndspeed_signal.disconnect(self.receivePAEASUnit)
-            self.datafile.alldata_signal.disconnect(self.receiveAllData)
+
+            self.datafile.startFlag = False
         if self.currentSourceLabel.text() == 'TCP/IP':
             self.Source_net.changeState()
 
@@ -101,7 +101,6 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
     def receiveAllData(self,list1):
         list1 = [float("%.2f" % ele) for ele in list1]
         self.alldata_signal.emit(list1)
-        print(111)
 
 
     def receiveDataUnit(self, datalist1, datalist2):
@@ -283,7 +282,7 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
 #        self.Source_net.show()
         self.currentSourceLabel.setText("TCP/IP")
 
-        # 设置文件
+        # 设置TCP/IP
         self.Source_net.alldata_signal.connect(self.receiveAllData)
         self.Source_net.dataunit_signal.connect(self.receiveDataUnit)
 #        self.Source_net.fileinfo_signal.connect(self.acceptFIleInfo)
@@ -291,7 +290,10 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
         self.Source_net.powerAndEnergyAndspeed_signal.connect(self.receivePAEASUnit)
 
     def OpenFile(self):
+        del self.datafile
         self.datafile = dataFile(self)  # 数据文件
+        self.robotdata = []  # 请空机器人信息
+        self.datafile.robotdata_signal.connect(self.receiveRobotdata)
         # 设置文件
         self.datafile.alldata_signal.connect(self.receiveAllData)
         self.datafile.dataunit_signal.connect(self.receiveDataUnit)
@@ -476,10 +478,12 @@ class mainWindow(QMainWindow, Pyqt5_Serial):
 
     def linkSource(self):
         print("self.timer.stopFlag:", self.timer.stopFlag)
-
+        self.robotdata = []
         if self.currentSourceLabel.text() == '文件':
             if not self.datafile.send_threading.isAlive():
-                self.datafile.send_threading.start()
+                self.datafile.startFlag = True
+                self.datafile.startsthreading()
+
             else:
                 self.datafile.dataunit_signal.connect(self.receiveDataUnit)
                 self.datafile.powerAndEnergyAndspeed_signal.connect(self.receivePAEASUnit)

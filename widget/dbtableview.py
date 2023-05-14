@@ -1,4 +1,4 @@
-
+import pymysql
 from PyQt5.QtGui import QIcon
 
 from db.sheetOp import SheetQuary, db
@@ -32,6 +32,7 @@ class dataselect(QWidget):
         self.model=QStandardItemModel()  # 初始化model
         self.model.setHorizontalHeaderLabels(['ofRobotNum', 'time', 'OfMotorName'])
         self.table.setModel(self.model)
+
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.readdata()
 
@@ -40,8 +41,10 @@ class dataselect(QWidget):
         self.readdataBtn=QPushButton("加载数据")
         self.okBtn=QPushButton("确认选择")
         self.cancelBtn=QPushButton("取消选择")
+        self.deleteBtn = QPushButton("删除数据")
 #        self.btnlayout.addWidget(self.readdataBtn)
         self.btnlayout.addWidget(self.okBtn)
+        self.btnlayout.addWidget(self.deleteBtn)
         self.btnlayout.addWidget(self.cancelBtn)
 
         # 设置layout
@@ -54,6 +57,7 @@ class dataselect(QWidget):
         self.readdataBtn.clicked.connect(self.readdata)
         self.okBtn.clicked.connect(self.receivedata)
         self.cancelBtn.clicked.connect(self.closeself)
+        self.deleteBtn.clicked.connect(self.deleteRow)
 
     def receivedata(self):
         currentrow=self.table.currentIndex().row()
@@ -66,6 +70,26 @@ class dataselect(QWidget):
         self.datas_signal.emit(timeseries,angledata)
         print(angledata)
         self.close()
+
+    def deleteRow(self):
+        # 删除表
+        self.model.removeRow(self.table.currentIndex().row())
+        print(self.model.item(self.table.currentIndex().row(),0).text())
+        num = self.model.item(self.table.currentIndex().row(),0).text()
+        time = self.model.item(self.table.currentIndex().row(),1).text()
+        OfMotorName = self.model.item(self.table.currentIndex().row(), 2).text()
+        cur = db.cursor()
+        # DELETE FROM angledata WHERE ofRobotNum='999' AND time='2023-05-05 10:27:15' AND OfMotorName='J3'
+        try:
+            sql = "DELETE FROM angledata WHERE ofRobotNum='{}' " \
+                  "AND time='{}'" \
+                  "AND OfMotorName='{}'".format(num,time,OfMotorName)
+            cur.execute(sql)
+            # 提交数据
+            db.commit()
+            print("删除数据: {} 成功！".format(num))
+        except pymysql.Error as e:
+            print("删除数据{}失败！".format(num) + str(e))
 
     def closeself(self):
         self.close()
