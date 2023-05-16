@@ -105,23 +105,23 @@ class graphMDI(QMdiArea):
                 subwin.timeseries = self.timeseries
             if subwin.motorname=='J2':
                 subwin.plotwid.setData(self.timeseries,self.data_J2,clear=True, pen=pen)
-                subwin.data = self.data_J1
+                subwin.data = self.data_J2
                 subwin.timeseries = self.timeseries
             if subwin.motorname=='J3':
                 subwin.plotwid.setData(self.timeseries,self.data_J3,clear=True, pen=pen)
-                subwin.data = self.data_J1
+                subwin.data = self.data_J3
                 subwin.timeseries = self.timeseries
             if subwin.motorname=='J4':
                 subwin.plotwid.setData(self.timeseries,self.data_J4,clear=True, pen=pen)
-                subwin.data = self.data_J1
+                subwin.data = self.data_J4
                 subwin.timeseries = self.timeseries
             if subwin.motorname=='J5':
                 subwin.plotwid.setData(self.timeseries,self.data_J5,clear=True, pen=pen)
-                subwin.data = self.data_J1
+                subwin.data = self.data_J5
                 subwin.timeseries = self.timeseries
             if subwin.motorname=='J6':
                 subwin.plotwid.setData(self.timeseries,self.data_J6,clear=True, pen=pen)
-                subwin.data = self.data_J1
+                subwin.data = self.data_J6
                 subwin.timeseries = self.timeseries
 
 
